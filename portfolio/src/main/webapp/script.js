@@ -16,10 +16,13 @@
  * Adds a random quote to the page.
  */
 function addRandomPrequelQuote() {
-  const quotes =    ["Hello there.", "There’s always a bigger fish.", "I don’t like sand. It’s coarse and rough and irritating and it gets everywhere.", 
-                    "Now this is podracing!", "I don’t care what universe you’re from, that’s got to hurt!", "I sense Count Dooku.", 
-                    "His cells have the highest concentration of midi-chlorians I have seen in a life-form.", "I AM the Senate!", 
-                    "I'm just a simple man, trying to make my way in the universe."];
+  const quotes = [`Hello there.`, `There’s always a bigger fish.`, `I \
+    don’t like sand. It’s coarse and rough and irritating and it gets \
+	everywhere.`, `Now this is podracing!`, `I don’t care what universe \
+	you’re from, that’s got to hurt!`, `I sense Count Dooku.`, `His cells \
+	have the highest concentration of midi-chlorians I have seen in a \
+	life-form.`, `I AM the Senate!`, `I’m just a simple man, trying to \
+	make my way in the universe.`];
 
   // Pick a random quote.
   const quote = quotes[Math.floor(Math.random() * quotes.length)];
@@ -34,7 +37,9 @@ function addRandomPrequelQuote() {
  */
 
 function changeProfilePic() {
-    const images = ["IMG_1502.png", "pfp_fr.jpg", "pfp_eg.jpg", "pfp_gr.jpg", "pfp_in.jpg", "pfp_it.jpg", "pfp_mtr.jpg", "pfp_sol.jpg", "pfp_uk.jpg"];
+    const images = ["IMG_1502.png", "pfp_fr.jpg", "pfp_eg.jpg", "pfp_gr.jpg",
+	    "pfp_in.jpg", "pfp_it.jpg", "pfp_mtr.jpg", "pfp_sol.jpg",
+	    "pfp_uk.jpg"];
     
     // Pick random image.
     const img = images[Math.floor(Math.random() * images.length)];
