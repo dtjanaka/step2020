@@ -14,13 +14,13 @@ table, th, td {
   border-collapse: collapse;
 }
 
-th, td {
-  padding: 10px;
-}
-
 table {
   margin-top: 20px;
   margin-bottom: 20px;
+}
+
+th, td {
+  padding: 10px;
 }
 
 .puzzle {
@@ -29,4 +29,8 @@ table {
 
 .times {
   text-align: right;
+}
+
+.text-block {
+    text-align: justify;
 }
