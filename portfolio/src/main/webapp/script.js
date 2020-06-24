@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-/*
+/**
  * Adds a random quote to the page.
  */
 function addRandomPrequelQuote() {
@@ -38,7 +38,7 @@ function addRandomPrequelQuote() {
   quoteContainer.innerText = quote;
 }
 
-/*
+/**
  * Changes profile picture to random image.
  */
 
