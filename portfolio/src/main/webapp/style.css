@@ -8,3 +8,29 @@
   margin-top: 20px;
   margin-bottom: 20px;
 }
+
+table, th, td {
+  border: 1px solid black;
+  border-collapse: collapse;
+}
+
+table {
+  margin-top: 20px;
+  margin-bottom: 20px;
+}
+
+th, td {
+  padding: 10px;
+}
+
+.puzzle {
+  text-align: center;
+}
+
+.times {
+  text-align: right;
+}
+
+.text-block {
+    text-align: justify;
+}
