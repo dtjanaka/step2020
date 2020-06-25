@@ -4,13 +4,17 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">  
     <meta charset="UTF-8" />
     <title>Micromouse</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
     <link rel="stylesheet" href="style.css" />
     <script src="script.js"></script>
   </head>
   <body>
     <div id="content">
       <h1>Micromouse</h1>
-      <p class="text-block">
+      <p class="text text-block">
         Micromouse is an event where small robot mice solve a 16×16 maze. I
         first heard about it in high school, but only started in college after
         joining the UCLA IEEE club. Micromice autonomously navigate from the
@@ -24,7 +28,7 @@
         experience and from my CS classes, I also gain a deep understanding of
         the EE side of things.
       </p>
-      <p class="text-block">
+      <p class="text text-block">
         I have built two mice so far. The first one, a "rat," is a proven design
         provided by the Micromouse instructors in UCLA IEEE which allowed new
         Micromousers such as myself to learn the fundamentals. It is based off
@@ -32,22 +36,23 @@
         including four IRs and two encoders.
       </p>
       <a id="rat-link" href="images/IMG_1594.jpg">
-        <img id="rat" src="images/IMG_1594.jpg" height="500" />
+        <img id="rat" class="center responsive" src="images/IMG_1594.jpg" height="500" />
       </a>
-      <p>
+      <p class="text">
         Below is a proof-of-concept video of the rat autonomously traversing a
         short path:
       </p>
+      <div class="resp-container">
       <iframe
-        width="560"
-        height="315"
+        class="responsive-iframe"
         src="https://www.youtube.com/embed/nHUUiYqV9mQ"
         frameborder="0"
         allow="accelerometer; autoplay; encrypted-media; gyroscope;
 	        picture-in-picture"
         allowfullscreen
       ></iframe>
-      <p class="text-block">
+      </div>
+      <p class="text text-block">
         The second mouse I have worked on is a custom design using the
         STM32F405RGT6 chip. It was designed with Autodesk Eagle; programming is
         done in the STM32 CubeIDE environment. It has six IRs, two encoders, and
@@ -55,7 +60,7 @@
         detect openings in walls in advance.
       </p>
       <a id="mm-link" href="images/IMG_2326.jpg">
-        <img id="mm" src="images/IMG_2326.jpg" height="500" />
+        <img id="mm" class="center responsive" src="images/IMG_2326.jpg" height="500" />
       </a>
     </div>
   </body>

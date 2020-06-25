@@ -1,10 +1,13 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta charset="UTF-8" />
     <title>Dylon Tjanaka</title>
-    <link href="https://fonts.googleapis.com/css2?family=Permanent+Marker&display=swap" rel="stylesheet">
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
     <link rel="stylesheet" href="style.css" />
     <!-- icon library -->
     <link
@@ -15,9 +18,15 @@
   </head>
   <body>
     <div id="content">
-      <h1 class="center text cursive">Dylon Tjanaka</h1>
+      <h1 class="center text">Dylon Tjanaka</h1>
       <a id="pfp-link" href="images/IMG_1502.png">
-        <img id="pfp" class="center responsive" src="images/IMG_1502.png" width="500" height="500"/>
+        <img
+          id="pfp"
+          class="center responsive"
+          src="images/IMG_1502.png"
+          width="500"
+          height="500"
+        />
       </a>
       <p class="text text-block">
         Welcome to my page! I am a rising second-year studying CS at UCLA. When
@@ -25,50 +34,68 @@
         older brother. My interests include algorithms and machine learning and
         my hobbies include robotics, cubing, and 3D printing.
       </p>
-      <button onclick="addRandomPrequelQuote()" class="center">
+      <button onclick="addRandomPrequelQuote()" class="center misc-button">
         Click here to get a random quote from the prequels!
       </button>
-      <div id="quote-container" class="text"></div>
-      <button onclick="changeProfilePic()" class="center">
+      <div id="quote-container" class="text" style="text-align: center;"></div>
+      <button onclick="changeProfilePic()" class="center misc-button">
         Click here to change my picture!
       </button>
-      <a href="widgets.html"><button id="widgets" class="center">Click here to see some JS widgets!</button></a>  
+      <a href="widgets.html"
+        ><button id="widgets" class="center misc-button">
+          Click here to see some JS widgets!
+        </button></a
+      >
       <p class="text">Or click the links below to learn more about me!</p>
       <div id="links" class="row">
         <div class="col-3">
-            <a href="robotics.html"><button>Robotics</button></a>
+          <a href="robotics.html"><button class="interest-button odd">Robotics</button></a>
         </div>
         <div class="col-3">
-            <a href="micromouse.html"><button>Micromouse</button></a>
+          <a href="micromouse.html"><button class="interest-button even">Micromouse</button></a>
         </div>
         <div class="col-3">
-            <a href="cubing.html"><button>Cubing</button></a>
+          <a href="cubing.html"><button class="interest-button odd">Cubing</button></a>
         </div>
         <div class="col-3">
-            <a href="printing.html"><button>3D Printing</button></a>
+          <a href="printing.html"><button class="interest-button even">3D Printing</button></a>
         </div>
       </div>
       <div id="social-media" class="row">
         <div id="linkedin" class="col-3">
           <a
-          href="https://www.linkedin.com/in/dylon-tjanaka-971508192"
-          target="_blank" class="fa fa-linkedin" style="font-size: 50px;">
-          </a>
-        </div>
-        <div class="col-3">
-          <a href="https://github.com/dtjanaka/" 
-          target="_blank" class="fa fa-github" style="font-size: 50px;">
+            href="https://www.linkedin.com/in/dylon-tjanaka-971508192"
+            target="_blank"
+            class="fa fa-linkedin"
+            style="font-size: 50px;"
+          >
           </a>
         </div>
         <div class="col-3">
           <a
-          href="https://www.youtube.com/channel/UCx1tcHdDx4esRDbmDgRIn9Q"
-          target="_blank" class="fa fa-youtube" style="font-size: 50px;">
+            href="https://github.com/dtjanaka/"
+            target="_blank"
+            class="fa fa-github"
+            style="font-size: 50px;"
+          >
           </a>
         </div>
         <div class="col-3">
-          <a href="https://www.instagram.com/dylon.tjanaka/"
-          target="_blank" class="fa fa-instagram" style="font-size: 50px;">
+          <a
+            href="https://www.youtube.com/channel/UCx1tcHdDx4esRDbmDgRIn9Q"
+            target="_blank"
+            class="fa fa-youtube"
+            style="font-size: 50px;"
+          >
+          </a>
+        </div>
+        <div class="col-3">
+          <a
+            href="https://www.instagram.com/dylon.tjanaka/"
+            target="_blank"
+            class="fa fa-instagram"
+            style="font-size: 50px;"
+          >
           </a>
         </div>
       </div>
