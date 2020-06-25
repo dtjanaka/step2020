@@ -1,7 +1,7 @@
 #content {
   margin-left: auto;
   margin-right: auto;
-  width: 650px;
+  width: 50%;
 }
 
 #quote-container {
@@ -9,7 +9,9 @@
   margin-bottom: 20px;
 }
 
-table, th, td {
+table,
+th,
+td {
   border: 1px solid black;
   border-collapse: collapse;
 }
@@ -19,7 +21,8 @@ table {
   margin-bottom: 20px;
 }
 
-th, td {
+th,
+td {
   padding: 10px;
 }
 
@@ -32,11 +35,11 @@ th, td {
 }
 
 .text-block {
-    text-align: justify;
+  text-align: justify;
 }
 
 .fa {
-  padding: 20px;
+  padding: 10px;
   width: 50px;
   text-align: center;
   text-decoration: none;
@@ -54,8 +57,8 @@ th, td {
 }
 
 .fa-github {
-    background: #6F42C1;
-    color: white;
+  background: #6f42c1;
+  color: white;
 }
 
 .fa-youtube {
@@ -68,3 +71,30 @@ th, td {
   color: white;
 }
 
+#links button {
+  width: 19%;
+}
+
+#links {
+  text-align: center;
+}
+
+#social-media {
+  display: flex;
+  justify-content: space-between;
+}
+
+.center {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.responsive {
+  width: 75%;
+  height: auto;
+}
+
+a {
+  text-decoration: none;
+}
