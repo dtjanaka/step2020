@@ -20,12 +20,12 @@ function addRandomPrequelQuote() {
     'Hello there.',
     'There’s always a bigger fish.',
     'I don’t like sand. It’s coarse and rough and irritating and it gets' +
-      'everywhere.',
+      ' everywhere.',
     'Now this is podracing!',
     'I don’t care what universe you’re from, that’s got to hurt!',
     'I sense Count Dooku.',
     'His cells have the highest concentration of midi-chlorians I have' +
-      'seen in a life-form.',
+      ' seen in a life-form.',
     'I AM the Senate!',
     'I’m just a simple man, trying to make my way in the universe.',
   ];
