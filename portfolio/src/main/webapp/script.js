@@ -17,24 +17,28 @@
  */
 function addRandomPrequelQuote() {
   const quotes = [
-    'Hello there.',
-    'There’s always a bigger fish.',
-    'I don’t like sand. It’s coarse and rough and irritating and it gets' +
-      ' everywhere.',
-    'Now this is podracing!',
-    'I don’t care what universe you’re from, that’s got to hurt!',
-    'I sense Count Dooku.',
-    'His cells have the highest concentration of midi-chlorians I have' +
-      ' seen in a life-form.',
-    'I AM the Senate!',
-    'I’m just a simple man, trying to make my way in the universe.',
+    "Hello there.",
+    "There’s always a bigger fish.",
+    "I don’t like sand. It’s coarse and rough and irritating and it gets" +
+      " everywhere.",
+    "Now this is podracing!",
+    "I don’t care what universe you’re from, that’s got to hurt!",
+    "I sense Count Dooku.",
+    "His cells have the highest concentration of midi-chlorians I have" +
+      " seen in a life-form.",
+    "I AM the Senate!",
+    "I’m just a simple man, trying to make my way in the universe.",
   ];
 
-  // Pick a random quote.
-  const quote = quotes[Math.floor(Math.random() * quotes.length)];
+  const quoteContainer = document.getElementById("quote-container");
+
+  // Pick a random different quote.
+  let quote = quoteContainer.innerText;
+  while (quote === quoteContainer.innerText) {
+    quote = quotes[Math.floor(Math.random() * quotes.length)];
+  }
 
   // Add it to the page.
-  const quoteContainer = document.getElementById('quote-container');
   quoteContainer.innerText = quote;
 }
 
@@ -44,85 +48,115 @@ function addRandomPrequelQuote() {
 
 function changeProfilePic() {
   const images = [
-    'IMG_1502.png',
-    'pfp_fr.jpg',
-    'pfp_eg.jpg',
-    'pfp_gr.jpg',
-    'pfp_in.jpg',
-    'pfp_it.jpg',
-    'pfp_mtr.jpg',
-    'pfp_sol.jpg',
-    'pfp_uk.jpg',
+    "IMG_1502.png",
+    "pfp_fr.jpg",
+    "pfp_eg.jpg",
+    "pfp_gr.jpg",
+    "pfp_in.jpg",
+    "pfp_it.jpg",
+    "pfp_mtr.jpg",
+    "pfp_sol.jpg",
+    "pfp_uk.jpg",
   ];
 
-  // Pick random image.
-  const img = images[Math.floor(Math.random() * images.length)];
+  // Pick random different image.
+  imgElement = document.getElementById("pfp");
+  let img = imgElement.src;
+  while (img === imgElement.src) {
+    img = images[Math.floor(Math.random() * images.length)];
+    img = "/images/" + img;
+  }
 
   // Add it to the page.
-  document.getElementById('pfp-link').href = '/images/' + img;
-  document.getElementById('pfp').src = '/images/' + img;
+  document.getElementById("pfp-link").href = img;
+  imgElement.src = img;
 }
 
+// Keep track of Xs and Os in each row, column, and diagonal
+// Top row, middle row, bottom row, L col, M col, R col,
+// upper left to lower right diag, lower left to upper right diag
 let xando = [
-  [0, 0, 0, 0, 0, 0, 0, 0],
-  [0, 0, 0, 0, 0, 0, 0, 0],
+  [0, 0, 0, 0, 0, 0, 0, 0] /* Xs */,
+  [0, 0, 0, 0, 0, 0, 0, 0] /* Os */,
 ];
 
 /**
  * Process tic-tac-toe game.
  */
 function ticTacToe(cell) {
-  const playerTurn = document.getElementById('player-turn').className;
+  const playerTurn = +document.getElementById("player-turn").className;
   const whichCell = document.getElementById(cell);
-  if (playerTurn === '0') {
-    whichCell.innerText = '❌';
+  if (playerTurn === 0) {
+    whichCell.innerText = "❌";
   } else {
-    whichCell.innerText = '⭕';
+    whichCell.innerText = "⭕";
   }
-  whichCell.disabled = true;
+  whichCell.onclick = ""; // instead of disabling button, which greys out text
 
-  if (cell < 4) {
-    xando[+playerTurn][0]++;
-  } else if (cell < 7) {
-    xando[+playerTurn][1]++;
-  } else {
-    xando[+playerTurn][2]++;
-  }
+  const row = Math.floor((cell - 1) / 3);
+  xando[playerTurn][row]++;
 
-  if (cell === 1 || cell === 4 || cell === 7) {
-    xando[+playerTurn][3]++;
-  } else if (cell === 2 || cell === 5 || cell === 8) {
-    xando[+playerTurn][4]++;
-  } else {
-    xando[+playerTurn][5]++;
+  const column = (cell - 1) % 3;
+  xando[playerTurn][column + 3]++;
+
+  if (row === column) {
+    // upper left - lower right diag
+    xando[playerTurn][6]++;
   }
 
-  if (cell === 1 || cell === 5 || cell === 9) {
-    xando[+playerTurn][6]++;
-  } else if (cell === 3 || cell === 5 || cell === 7) {
-    xando[+playerTurn][7]++;
+  if (row + column === 2) {
+    // lower left - upper right diag
+    xando[playerTurn][7]++;
   }
 
   let winner;
 
-  for (let i = 0; i < 2; i++) {
+  for (let player = 0; player < 2; player++) {
     for (let j = 0; j < 8; j++) {
-      if (xando[i][j] >= 3) {
-        winner = i;
+      if (xando[player][j] >= 3) {
+        winner = player;
       }
     }
   }
 
   if (winner !== undefined) {
     for (let i = 1; i < 10; i++) {
-      document.getElementById(i).disabled = true;
+      document.getElementById(i).onclick = "";
     }
-    document.getElementById('player-turn').innerText =
-      'Player ' + (winner ? 'O' : 'X') + ' wins!';
+    document.getElementById("player-turn").innerText =
+      "Player " + (winner ? "O" : "X") + " wins!";
     return;
   }
 
-  document.getElementById('player-turn').className = +playerTurn ? '0' : '1';
-  document.getElementById('player-turn').innerText =
-    'Player ' + (+playerTurn ? 'X' : 'O') + ', make your move.';
+  let tied = true;
+
+  for (let i = 1; i < 10; i++) {
+    if (document.getElementById(i).onclick !== "") {
+      tied = false;
+    }
+  }
+
+  if (tied) {
+    document.getElementById("player-turn").innerText = "Draw! No winner.";
+  } else {
+    document.getElementById("player-turn").className = playerTurn ? "0" : "1";
+    document.getElementById("player-turn").innerText =
+      "Player " + (playerTurn ? "X" : "O") + ", make your move.";
+  }
+}
+
+function resetTicTacToe() {
+  xando = [
+    [0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0],
+  ];
+  for (let i = 1; i < 10; i++) {
+    document.getElementById(i).innerText = "";
+    document.getElementById(i).onclick = function () {
+      ticTacToe(i);
+    };
+    document.getElementById("player-turn").className = "0";
+    document.getElementById("player-turn").innerText =
+      "Player X, make your move.";
+  }
 }
