@@ -1,9 +1,13 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">  
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta charset="UTF-8" />
     <title>Micromouse</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
     <link rel="stylesheet" href="style.css" />
     <script src="script.js"></script>
   </head>
@@ -32,21 +36,22 @@
         including four IRs and two encoders.
       </p>
       <a id="rat-link" href="images/IMG_1594.jpg">
-        <img id="rat" src="images/IMG_1594.jpg" height="500" />
+        <img id="rat" class="center responsive" src="images/IMG_1594.jpg" />
       </a>
       <p>
         Below is a proof-of-concept video of the rat autonomously traversing a
         short path:
       </p>
-      <iframe
-        width="560"
-        height="315"
-        src="https://www.youtube.com/embed/nHUUiYqV9mQ"
-        frameborder="0"
-        allow="accelerometer; autoplay; encrypted-media; gyroscope;
+      <div class="resp-container">
+        <iframe
+          class="responsive-iframe"
+          src="https://www.youtube.com/embed/nHUUiYqV9mQ"
+          frameborder="0"
+          allow="accelerometer; autoplay; encrypted-media; gyroscope;
 	        picture-in-picture"
-        allowfullscreen
-      ></iframe>
+          allowfullscreen
+        ></iframe>
+      </div>
       <p class="text-block">
         The second mouse I have worked on is a custom design using the
         STM32F405RGT6 chip. It was designed with Autodesk Eagle; programming is
@@ -55,7 +60,7 @@
         detect openings in walls in advance.
       </p>
       <a id="mm-link" href="images/IMG_2326.jpg">
-        <img id="mm" src="images/IMG_2326.jpg" height="500" />
+        <img id="mm" class="center responsive" src="images/IMG_2326.jpg" />
       </a>
     </div>
   </body>

@@ -4,6 +4,19 @@
 
 body {
     background-color: #f8f8ff;
+    font-family: 'Poppins', sans-serif;
+}
+
+button {
+    font-family: 'Poppins', sans-serif;
+}
+
+h1 {
+    font-size: 50px;
+}
+
+a {
+  text-decoration: none;
 }
 
 #content {
@@ -93,12 +106,7 @@ td {
   text-align: center;
 }
 
-/*#social-media {
-  display: flex;
-  justify-content: space-between;
-}*/
-
-.center {
+.center, iframe {
   display: block;
   margin-left: auto;
   margin-right: auto;
@@ -107,10 +115,6 @@ td {
 .responsive {
   width: 50%;
   height: auto;
-}
-
-a {
-  text-decoration: none;
 }
 
 .row::after {
@@ -156,15 +160,78 @@ a {
   width: 100%;
 }
 
+.tictactoe {
+    background-color: rgb(111, 66, 193);
+    color: white;
+    cursor: pointer;
+    font-size: large;
+    width: 100%;
+    padding-top: 100%;
+}
+
+.col-tictactoe {
+    width: 33.33%;
+    float: left;
+}
+
 [class*="col-"] {
   float: left;
 }
 
-@media only screen and (max-width: 1200px) {
-  #content {
-    width: 100%;
-  }
-  .text {
+.misc-button {
+    height: 50px;
+    width: 50%;
+    background-color: #009DDC;
+    border: none;
+    color: white;
+    cursor: pointer;
+    font-size: large;
+}
+
+.interest-button {
+    border: none;
+    color: white;
+    cursor: pointer;
+    font-size: large;
+}
+
+.odd {
+    background-color: #16C172;
+}
+
+.even {
+    background-color: #0CCf75;
+}
+
+button:hover {
+    opacity: 0.7;
+}
+
+.resp-container {
+    position: relative;
+    overflow: hidden;
+    padding-top: 56.25%;
+}
+
+.responsive-iframe {
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  width: 100%;
+  height: 100%;
+  border: none;
+}
+
+@media only screen and (max-width: 1600px) {
+    .misc-button {
+        width: 100%;
+    }
+}
+
+@media only screen and (max-width: 1250px) {
+  #quote-container, p, h1 {
       padding-left: 10px;
       padding-right: 10px;
   }
@@ -180,6 +247,14 @@ a {
   }
 }
 
-.cursive {
-    font-family: 'Permanent Marker', cursive;
+@media only screen and (max-width: 1000px) {
+  #content, img {
+    width: 75%;
+  }
+}
+
+@media only screen and (max-width: 600px) {
+  #content, img {
+    width: 100%;
+  }
 }
