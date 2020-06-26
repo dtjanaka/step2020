@@ -160,24 +160,16 @@ td {
   width: 100%;
 }
 
+.tac-cont {
+    font-size: 0px;
+}
+
 .tictactoe {
-    background-color: #FFB347;
-    color: white;
-    cursor: pointer;
-    font-size: 0;
     border: 1px solid #F8F8FF;
-    width: 100%;
-    padding-top: 100%;
-    margin-top: -5px;
-}
-
-.top {
-    margin-top: 0px;
-}
-
-.col-tictactoe {
-    width: 33.33%;
-    float: left;
+    width: 100px;
+    height: 100px;
+    font-size: 50px;
+    background-color: black;
 }
 
 [class*="col-"] {

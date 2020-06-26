@@ -62,3 +62,10 @@ function changeProfilePic() {
   document.getElementById('pfp-link').href = '/images/' + img;
   document.getElementById('pfp').src = '/images/' + img;
 }
+
+/**
+ * Process tic-tac-toe clicks.
+ */
+function ticTacToe(cell) {
+    
+}
