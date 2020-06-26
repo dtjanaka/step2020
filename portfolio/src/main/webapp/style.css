@@ -3,16 +3,16 @@
 }
 
 body {
-    background-color: #f8f8ff;
-    font-family: 'Poppins', sans-serif;
+  background-color: #f8f8ff;
+  font-family: "Poppins", sans-serif;
 }
 
 button {
-    font-family: 'Poppins', sans-serif;
+  font-family: "Poppins", sans-serif;
 }
 
 h1 {
-    font-size: 50px;
+  font-size: 50px;
 }
 
 a {
@@ -106,7 +106,8 @@ td {
   text-align: center;
 }
 
-.center, iframe {
+.center,
+iframe {
   display: block;
   margin-left: auto;
   margin-right: auto;
@@ -161,16 +162,16 @@ td {
 }
 
 .tac-cont {
-    font-size: 0px;
+  font-size: 0px;
 }
 
 .tictactoe {
-    border: 1px solid #F8F8FF;
-    width: 100px;
-    height: 100px;
-    font-size: 50px;
-    background-color: black;
-    vertical-align:top;
+  border: 1px solid #f8f8ff;
+  width: 100px;
+  height: 100px;
+  font-size: 50px;
+  background-color: black;
+  vertical-align: top;
 }
 
 [class*="col-"] {
@@ -178,38 +179,38 @@ td {
 }
 
 .misc-button {
-    height: 50px;
-    width: 50%;
-    background-color: #009DDC;
-    border: none;
-    color: white;
-    cursor: pointer;
-    font-size: large;
+  height: 50px;
+  width: 50%;
+  background-color: #009ddc;
+  border: none;
+  color: white;
+  cursor: pointer;
+  font-size: large;
 }
 
 .interest-button {
-    border: none;
-    color: white;
-    cursor: pointer;
-    font-size: large;
+  border: none;
+  color: white;
+  cursor: pointer;
+  font-size: large;
 }
 
 .odd {
-    background-color: #16C172;
+  background-color: #16c172;
 }
 
 .even {
-    background-color: #0CCf75;
+  background-color: #0ccf75;
 }
 
 button:hover {
-    opacity: 0.7;
+  opacity: 0.7;
 }
 
 .resp-container {
-    position: relative;
-    overflow: hidden;
-    padding-top: 56.25%;
+  position: relative;
+  overflow: hidden;
+  padding-top: 56.25%;
 }
 
 .responsive-iframe {
@@ -224,15 +225,18 @@ button:hover {
 }
 
 @media only screen and (max-width: 1600px) {
-    .misc-button {
-        width: 100%;
-    }
+  .misc-button {
+    width: 100%;
+  }
 }
 
 @media only screen and (max-width: 1250px) {
-  #quote-container, p, h1 {
-      padding-left: 10px;
-      padding-right: 10px;
+  #quote-container,
+  p,
+  h1,
+  h2 {
+    padding-left: 10px;
+    padding-right: 10px;
   }
   [class*="col-"] {
     width: 100%;
@@ -247,13 +251,15 @@ button:hover {
 }
 
 @media only screen and (max-width: 1000px) {
-  #content, img {
+  #content,
+  img {
     width: 75%;
   }
 }
 
 @media only screen and (max-width: 600px) {
-  #content, img {
+  #content,
+  img {
     width: 100%;
   }
 }
