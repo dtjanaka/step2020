@@ -170,6 +170,7 @@ td {
     height: 100px;
     font-size: 50px;
     background-color: black;
+    vertical-align:top;
 }
 
 [class*="col-"] {
