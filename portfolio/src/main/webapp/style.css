@@ -161,12 +161,18 @@ td {
 }
 
 .tictactoe {
-    background-color: rgb(111, 66, 193);
+    background-color: #FFB347;
     color: white;
     cursor: pointer;
-    font-size: large;
+    font-size: 0;
+    border: 1px solid #F8F8FF;
     width: 100%;
     padding-top: 100%;
+    margin-top: -5px;
+}
+
+.top {
+    margin-top: 0px;
 }
 
 .col-tictactoe {
