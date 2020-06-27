@@ -255,27 +255,6 @@ button:hover {
   }
 }
 
-h1 {
-    font-size: 50px;
-}
-
-.misc-button {
-    height: 50px;
-    width: 50%;
-    background-color: #009DDC;
-    border: none;
-    color: white;
-    cursor: pointer;
-    font-size: large;
-}
-
-.interest-button {
-    border: none;
-    color: white;
-    cursor: pointer;
-    font-size: large;
-}
-
 @media only screen and (max-width: 1000px) {
   #content,
   img {
@@ -288,32 +267,4 @@ h1 {
   img {
     width: 100%;
   }
-
-.odd {
-    background-color: #16C172;
-}
-
-.even {
-    background-color: #0CCf75;
-}
-
-button:hover {
-    opacity: 0.7;
-}
-
-.resp-container {
-    position: relative;
-    overflow: hidden;
-    padding-top: 56.25%;
-}
-
-.responsive-iframe {
-  position: absolute;
-  top: 0;
-  left: 0;
-  bottom: 0;
-  right: 0;
-  width: 100%;
-  height: 100%;
-  border: none;
 }
