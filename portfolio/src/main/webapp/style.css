@@ -1,7 +1,20 @@
+* {
+  box-sizing: border-box;
+}
+
+body {
+    background-color: #f8f8ff;
+    font-family: 'Poppins', sans-serif;
+}
+
+button {
+    font-family: 'Poppins', sans-serif;
+}
+
 #content {
   margin-left: auto;
   margin-right: auto;
-  width: 650px;
+  width: 40%;
 }
 
 #quote-container {
@@ -9,7 +22,14 @@
   margin-bottom: 20px;
 }
 
-table, th, td {
+#widgets {
+  margin-top: 20px;
+  margin-bottom: 20px;
+}
+
+table,
+th,
+td {
   border: 1px solid black;
   border-collapse: collapse;
 }
@@ -19,7 +39,8 @@ table {
   margin-bottom: 20px;
 }
 
-th, td {
+th,
+td {
   padding: 10px;
 }
 
@@ -32,12 +53,12 @@ th, td {
 }
 
 .text-block {
-    text-align: justify;
+  text-align: justify;
 }
 
 .fa {
-  padding: 20px;
-  width: 50px;
+  padding: 10px;
+  width: 100%;
   text-align: center;
   text-decoration: none;
   margin-top: 20px;
@@ -54,8 +75,8 @@ th, td {
 }
 
 .fa-github {
-    background: #6F42C1;
-    color: white;
+  background: #6f42c1;
+  color: white;
 }
 
 .fa-youtube {
@@ -68,3 +89,144 @@ th, td {
   color: white;
 }
 
+#links button {
+  width: 100%;
+  height: 50px;
+}
+
+#links {
+  text-align: center;
+}
+
+.center, iframe {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.responsive {
+  width: 50%;
+  height: auto;
+}
+
+a {
+  text-decoration: none;
+}
+
+.row::after {
+  content: "";
+  clear: both;
+  display: table;
+}
+
+.col-1 {
+  width: 8.33%;
+}
+.col-2 {
+  width: 16.66%;
+}
+.col-3 {
+  width: 25%;
+}
+.col-4 {
+  width: 33.33%;
+}
+.col-5 {
+  width: 41.66%;
+}
+.col-6 {
+  width: 50%;
+}
+.col-7 {
+  width: 58.33%;
+}
+.col-8 {
+  width: 66.66%;
+}
+.col-9 {
+  width: 75%;
+}
+.col-10 {
+  width: 83.33%;
+}
+.col-11 {
+  width: 91.66%;
+}
+.col-12 {
+  width: 100%;
+}
+
+[class*="col-"] {
+  float: left;
+}
+
+@media only screen and (max-width: 1200px) {
+  #content {
+    width: 100%;
+  }
+  .text {
+      padding-left: 10px;
+      padding-right: 10px;
+  }
+  [class*="col-"] {
+    width: 100%;
+  }
+  .fa {
+    margin-top: 0px;
+    margin-bottom: 0px;
+  }
+  .fa-linkedin {
+    margin-top: 20px;
+  }
+}
+/*TODO: Add more sizes */
+
+h1 {
+    font-size: 50px;
+}
+
+.misc-button {
+    height: 50px;
+    width: 50%;
+    background-color: #009DDC;
+    border: none;
+    color: white;
+    cursor: pointer;
+    font-size: large;
+}
+
+.interest-button {
+    border: none;
+    color: white;
+    cursor: pointer;
+    font-size: large;
+}
+
+.odd {
+    background-color: #16C172;
+}
+
+.even {
+    background-color: #0CCf75;
+}
+
+button:hover {
+    opacity: 0.7;
+}
+
+.resp-container {
+    position: relative;
+    overflow: hidden;
+    padding-top: 56.25%;
+}
+
+.responsive-iframe {
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  width: 100%;
+  height: 100%;
+  border: none;
+}
