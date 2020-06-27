@@ -160,3 +160,12 @@ function resetTicTacToe() {
       'Player X, make your move.';
   }
 }
+
+/**
+ * Fetch content from data servlet and place in container.
+ */
+async function getDataServletContent() {
+  const response = await fetch('/data');
+  const msg = await response.text();
+  document.getElementById('content-container').innerHTML = msg;
+}
