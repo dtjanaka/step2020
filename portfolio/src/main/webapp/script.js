@@ -30,11 +30,15 @@ function addRandomPrequelQuote() {
     'I’m just a simple man, trying to make my way in the universe.',
   ];
 
-  // Pick a random quote.
-  const quote = quotes[Math.floor(Math.random() * quotes.length)];
+  const quoteContainer = document.getElementById('quote-container');
+
+  // Pick a random different quote.
+  let quote = quoteContainer.innerText;
+  while (quote === quoteContainer.innerText) {
+    quote = quotes[Math.floor(Math.random() * quotes.length)];
+  }
 
   // Add it to the page.
-  const quoteContainer = document.getElementById('quote-container');
   quoteContainer.innerText = quote;
 }
 
@@ -55,10 +59,104 @@ function changeProfilePic() {
     'pfp_uk.jpg',
   ];
 
-  // Pick random image.
-  const img = images[Math.floor(Math.random() * images.length)];
+  // Pick random different image.
+  imgElement = document.getElementById('pfp');
+  let img = imgElement.src;
+  while (img === imgElement.src) {
+    img = images[Math.floor(Math.random() * images.length)];
+    img = '/images/' + img;
+  }
 
   // Add it to the page.
-  document.getElementById('pfp-link').href = '/images/' + img;
-  document.getElementById('pfp').src = '/images/' + img;
+  document.getElementById('pfp-link').href = img;
+  imgElement.src = img;
+}
+
+// Keep track of Xs and Os in each row, column, and diagonal
+// Top row, middle row, bottom row, L col, M col, R col,
+// upper left to lower right diag, lower left to upper right diag
+let xando = [
+  [0, 0, 0, 0, 0, 0, 0, 0] /* Xs */,
+  [0, 0, 0, 0, 0, 0, 0, 0] /* Os */,
+];
+
+/**
+ * Process tic-tac-toe game.
+ */
+function ticTacToe(cell) {
+  const playerTurn = +document.getElementById('player-turn').className;
+  const whichCell = document.getElementById(cell);
+  if (playerTurn === 0) {
+    whichCell.innerText = '❌';
+  } else {
+    whichCell.innerText = '⭕';
+  }
+  whichCell.onclick = ''; // instead of disabling button, which greys out text
+
+  const row = Math.floor((cell - 1) / 3);
+  xando[playerTurn][row]++;
+
+  const column = (cell - 1) % 3;
+  xando[playerTurn][column + 3]++;
+
+  if (row === column) {
+    // upper left - lower right diag
+    xando[playerTurn][6]++;
+  }
+
+  if (row + column === 2) {
+    // lower left - upper right diag
+    xando[playerTurn][7]++;
+  }
+
+  let winner;
+
+  for (let player = 0; player < 2; player++) {
+    for (let j = 0; j < 8; j++) {
+      if (xando[player][j] >= 3) {
+        winner = player;
+      }
+    }
+  }
+
+  if (winner !== undefined) {
+    for (let i = 1; i < 10; i++) {
+      document.getElementById(i).onclick = '';
+    }
+    document.getElementById('player-turn').innerText =
+      'Player ' + (winner ? 'O' : 'X') + ' wins!';
+    return;
+  }
+
+  let tied = true;
+
+  for (let i = 1; i < 10; i++) {
+    if (document.getElementById(i).onclick !== '') {
+      tied = false;
+    }
+  }
+
+  if (tied) {
+    document.getElementById('player-turn').innerText = 'Draw! No winner.';
+  } else {
+    document.getElementById('player-turn').className = playerTurn ? '0' : '1';
+    document.getElementById('player-turn').innerText =
+      'Player ' + (playerTurn ? 'X' : 'O') + ', make your move.';
+  }
+}
+
+function resetTicTacToe() {
+  xando = [
+    [0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0],
+  ];
+  for (let i = 1; i < 10; i++) {
+    document.getElementById(i).innerText = '';
+    document.getElementById(i).onclick = function () {
+      ticTacToe(i);
+    };
+    document.getElementById('player-turn').className = '0';
+    document.getElementById('player-turn').innerText =
+      'Player X, make your move.';
+  }
 }

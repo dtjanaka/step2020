@@ -1,20 +1,41 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">  
-    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta charset="UTF-8" />
     <title>Widgets</title>
     <link
       href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="style.css" />
     <script src="script.js"></script>
   </head>
   <body>
     <div id="content">
-        <h1>Widgets</h1>
-        <p>Lorem ipsum</p>
+      <h1>Widgets</h1>
+      <h2>Tic-Tac-Toe</h2>
+      <p id="player-turn" class="0">Player X, make your move.</p>
+      <div style="text-align: center;">
+        <div class="tac-cont">
+          <button id="1" class="tictactoe" onclick="ticTacToe(1)"></button>
+          <button id="2" class="tictactoe" onclick="ticTacToe(2)"></button>
+          <button id="3" class="tictactoe" onclick="ticTacToe(3)"></button>
+        </div>
+        <div class="tac-cont">
+          <button id="4" class="tictactoe" onclick="ticTacToe(4)"></button>
+          <button id="5" class="tictactoe" onclick="ticTacToe(5)"></button>
+          <button id="6" class="tictactoe" onclick="ticTacToe(6)"></button>
+        </div>
+        <div class="tac-cont">
+          <button id="7" class="tictactoe" onclick="ticTacToe(7)"></button>
+          <button id="8" class="tictactoe" onclick="ticTacToe(8)"></button>
+          <button id="9" class="tictactoe" onclick="ticTacToe(9)"></button>
+        </div>
+      </div>
+      <button id="reset" class="center misc-button" onclick="resetTicTacToe()">
+        Reset board
+      </button>
     </div>
   </body>
 </html>

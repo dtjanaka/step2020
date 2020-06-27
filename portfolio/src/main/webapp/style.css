@@ -3,12 +3,20 @@
 }
 
 body {
-    background-color: #f8f8ff;
-    font-family: 'Poppins', sans-serif;
+  background-color: #f8f8ff;
+  font-family: "Poppins", sans-serif;
 }
 
 button {
-    font-family: 'Poppins', sans-serif;
+  font-family: "Poppins", sans-serif;
+}
+
+h1 {
+  font-size: 50px;
+}
+
+a {
+  text-decoration: none;
 }
 
 #content {
@@ -98,7 +106,8 @@ td {
   text-align: center;
 }
 
-.center, iframe {
+.center,
+iframe {
   display: block;
   margin-left: auto;
   margin-right: auto;
@@ -107,10 +116,6 @@ td {
 .responsive {
   width: 50%;
   height: auto;
-}
-
-a {
-  text-decoration: none;
 }
 
 .row::after {
@@ -156,17 +161,87 @@ a {
   width: 100%;
 }
 
+.tac-cont {
+  font-size: 0px;
+}
+
+.tictactoe {
+  border: 1px solid #f8f8ff;
+  width: 100px;
+  height: 100px;
+  font-size: 25px;
+  background-color: black;
+  vertical-align: top;
+}
+
 [class*="col-"] {
   float: left;
 }
 
-@media only screen and (max-width: 1200px) {
-  #content {
+.misc-button {
+  height: 50px;
+  width: 50%;
+  background-color: #009ddc;
+  border: none;
+  color: white;
+  cursor: pointer;
+  font-size: large;
+}
+
+.interest-button {
+  border: none;
+  color: white;
+  cursor: pointer;
+  font-size: large;
+}
+
+.odd {
+  background-color: #16c172;
+}
+
+.even {
+  background-color: #0ccf75;
+}
+
+button:hover {
+  opacity: 0.7;
+}
+
+.resp-container {
+  position: relative;
+  overflow: hidden;
+  padding-top: 56.25%;
+}
+
+.responsive-iframe {
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  width: 100%;
+  height: 100%;
+  border: none;
+}
+
+#reset {
+  margin-top: 20px;
+  margin-bottom: 20px;
+}
+
+@media only screen and (max-width: 1600px) {
+  .misc-button {
     width: 100%;
   }
-  .text {
-      padding-left: 10px;
-      padding-right: 10px;
+}
+
+@media only screen and (max-width: 1250px) {
+  #quote-container,
+  p,
+  h1,
+  h2 {
+    padding-left: 10px;
+    padding-right: 10px;
   }
   [class*="col-"] {
     width: 100%;
@@ -179,7 +254,6 @@ a {
     margin-top: 20px;
   }
 }
-/*TODO: Add more sizes */
 
 h1 {
     font-size: 50px;
@@ -201,6 +275,19 @@ h1 {
     cursor: pointer;
     font-size: large;
 }
+
+@media only screen and (max-width: 1000px) {
+  #content,
+  img {
+    width: 75%;
+  }
+}
+
+@media only screen and (max-width: 600px) {
+  #content,
+  img {
+    width: 100%;
+  }
 
 .odd {
     background-color: #16C172;
