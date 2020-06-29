@@ -229,6 +229,12 @@ button:hover {
   margin-bottom: 20px;
 }
 
+#comment-box {
+    width: 100%;
+    height: 100px;
+    margin-bottom: 20px;
+}
+
 @media only screen and (max-width: 1600px) {
   .misc-button {
     width: 100%;
@@ -242,7 +248,8 @@ button:hover {
   #content-container,
   p,
   h1,
-  h2 {
+  h2,
+  h3 {
     padding-left: 10px;
     padding-right: 10px;
   }
