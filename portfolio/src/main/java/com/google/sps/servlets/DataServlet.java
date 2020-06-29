@@ -27,13 +27,16 @@ import java.util.ArrayList;
 @WebServlet("/data")
 public class DataServlet extends HttpServlet {
 
-  @Override
-  public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-    response.setContentType("text/html;");
+  public void init() {
     ArrayList<Comment> messages = new ArrayList<Comment>();
     messages.add(new Comment("Tom", "Great website!"));
     messages.add(new Comment("Bill", "Excellent color palette!"));
     messages.add(new Comment("Jack", "Love the aesthetic!"));
+  }
+
+  @Override
+  public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    response.setContentType("text/html;");
     Gson gson = new GsonBuilder().setPrettyPrinting().create();
     String jsonMsg = gson.toJson(messages);
     response.getWriter().println(jsonMsg);
