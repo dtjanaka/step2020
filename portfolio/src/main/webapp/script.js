@@ -166,6 +166,20 @@ function resetTicTacToe() {
  */
 async function getDataServletContent() {
   const response = await fetch('/data');
-  const msg = await response.text();
-  document.getElementById('content-container').innerHTML = msg;
+  const msg = await response.json();
+  
+  const commentContainer = document.getElementById('content-container');
+
+  for (let numComment = 0; numComment < Object.keys(msg).length; numComment++) {
+    commentContainer.appendChild(createCommentElement(msg[numComment].name + ": " + msg[numComment].comment));
+  }
+}
+
+/**
+ * Creates a <p> element containing text.
+ */
+function createCommentElement(text) {
+  const pElement = document.createElement('p');
+  pElement.innerText = text;
+  return pElement;
 }
