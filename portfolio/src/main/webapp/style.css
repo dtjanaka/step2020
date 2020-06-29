@@ -25,7 +25,7 @@ a {
   width: 40%;
 }
 
-#quote-container {
+#content-container {
   margin-top: 20px;
   margin-bottom: 20px;
 }
@@ -233,10 +233,13 @@ button:hover {
   .misc-button {
     width: 100%;
   }
+  .responsive {
+    width: 75%;
+  }
 }
 
 @media only screen and (max-width: 1250px) {
-  #quote-container,
+  #content-container,
   p,
   h1,
   h2 {
@@ -256,15 +259,14 @@ button:hover {
 }
 
 @media only screen and (max-width: 1000px) {
-  #content,
-  img {
+  #content {
     width: 75%;
   }
 }
 
 @media only screen and (max-width: 600px) {
   #content,
-  img {
+  .responsive {
     width: 100%;
   }
 }
