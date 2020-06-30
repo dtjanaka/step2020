@@ -23,23 +23,47 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import java.util.ArrayList;
 import java.time.LocalDateTime;
+import com.google.appengine.api.datastore.DatastoreService;
+import com.google.appengine.api.datastore.DatastoreServiceFactory;
+import com.google.appengine.api.datastore.Entity;
+import com.google.appengine.api.datastore.PreparedQuery;
+import com.google.appengine.api.datastore.Query;
 
 @WebServlet("/comments")
 public class DataServlet extends HttpServlet {
-
-  ArrayList<Comment> comments = new ArrayList<Comment>();
 
   @Override
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
     String name = request.getParameter("name");
     String comment = request.getParameter("comment");
-    comments.add(new Comment(name, comment));
+
+    Entity commentEntity = new Entity("Comment");
+    commentEntity.setProperty("name", name);
+    commentEntity.setProperty("comment", comment);
+
+    DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+    datastore.put(commentEntity);
+
     response.sendRedirect("/comments.html");
   }
 
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-    response.setContentType("text/json");
+    response.setContentType("application/json");
+
+    Query query = new Query("Comment");
+
+    DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+    PreparedQuery storedComments = datastore.prepare(query);
+
+    ArrayList<Comment> comments = new ArrayList<Comment>();
+    for (Entity entity : storedComments.asIterable()) {
+      String name = (String) entity.getProperty("name");
+      String comment = (String) entity.getProperty("comment");
+
+      comments.add(new Comment(name, comment));
+    }
+
     Gson gson = new GsonBuilder().setPrettyPrinting().create();
     String jsonComments = gson.toJson(comments);
     response.getWriter().println(jsonComments);
