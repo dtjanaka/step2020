@@ -11,13 +11,22 @@
     <link rel="stylesheet" href="style.css" />
     <script src="script.js"></script>
   </head>
-  <body>
+  <body onload="updateComments()">
     <div id="content">
       <h1>Comments</h1>
-      <button onclick="getDataServletContent()" class="center misc-button">
-        Fetch content from data servlet
-      </button>
-      <div id="content-container" style="text-align: center;"></div>
+      <form action="/comments" method="POST">
+        <p>Leave a comment below.</p>
+        <label for="name">Name:</label>
+        <br>
+        <input type="text" name="name">
+        <br>
+        <label for="comment">Comment:</label>
+        <br>
+        <textarea name="comment" id="comment-box"></textarea>
+        <br>        
+        <input type="submit" class="center misc-button"/>
+      </form>
+      <div id="content-container"></div>
     </div>
   </body>
 </html>

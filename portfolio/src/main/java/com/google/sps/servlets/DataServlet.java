@@ -14,7 +14,11 @@
 
 package com.google.sps.servlets;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import java.io.IOException;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -23,22 +27,24 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import java.util.ArrayList;
 
-/** Servlet that returns some example content. TODO: modify this file to handle comments data */
-@WebServlet("/data")
+@WebServlet("/comments")
 public class DataServlet extends HttpServlet {
 
-  public void init() {
-    ArrayList<Comment> messages = new ArrayList<Comment>();
-    messages.add(new Comment("Tom", "Great website!"));
-    messages.add(new Comment("Bill", "Excellent color palette!"));
-    messages.add(new Comment("Jack", "Love the aesthetic!"));
+  ArrayList<Comment> comments = new ArrayList<Comment>();
+
+  @Override
+  public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    String name = request.getParameter("name");
+    String comment = request.getParameter("comment");
+    comments.add(new Comment(name, comment));
+    response.sendRedirect("/comments.html");
   }
 
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-    response.setContentType("text/html;");
+    response.setContentType("text/json");
     Gson gson = new GsonBuilder().setPrettyPrinting().create();
-    String jsonMsg = gson.toJson(messages);
-    response.getWriter().println(jsonMsg);
+    String jsonComments = gson.toJson(comments);
+    response.getWriter().println(jsonComments);
   }
 }
