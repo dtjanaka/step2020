@@ -171,7 +171,7 @@ async function updateComments() {
   const commentContainer = document.getElementById('content-container');
 
   for (let numComment = 0; numComment < Object.keys(msg).length; numComment++) {
-    commentContainer.appendChild(createNameElement(msg[numComment].name));    
+    commentContainer.appendChild(createNameElement(msg[numComment].name, msg[numComment].date, msg[numComment].time));    
     commentContainer.appendChild(createCommentElement(msg[numComment].comment));
   }
 }
@@ -179,10 +179,17 @@ async function updateComments() {
 /**
  * Creates a <h3> element containing commenter name.
  */
-function createNameElement(text) {
+function createNameElement(name, date, time) {
   const h3Element = document.createElement('h3');
-  h3Element.innerText = text;
-  return h3Element;
+  h3Element.innerText = name;
+  h3Element.className = "commenter-name";
+  const pElement = document.createElement('p');
+  pElement.innerText = date + " at " + time + " GMT";
+  pElement.className = "commenter-time";
+  divElement = document.createElement('div');
+  divElement.appendChild(h3Element);
+  divElement.appendChild(pElement);
+  return divElement;
 }
 
 /**

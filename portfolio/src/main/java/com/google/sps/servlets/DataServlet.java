@@ -23,6 +23,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import java.util.ArrayList;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.Entity;
@@ -37,9 +38,17 @@ public class DataServlet extends HttpServlet {
     String name = request.getParameter("name");
     String comment = request.getParameter("comment");
 
+    LocalDateTime now = LocalDateTime.now();
+    DateTimeFormatter date = DateTimeFormatter.ofPattern("d MMMM yyyy");
+    DateTimeFormatter time = DateTimeFormatter.ofPattern("H:mm:ss a"); 
+    String formatDate = now.format(date);  
+    String formatTime = now.format(time);
+
     Entity commentEntity = new Entity("Comment");
     commentEntity.setProperty("name", name);
     commentEntity.setProperty("comment", comment);
+    commentEntity.setProperty("date", formatDate);
+    commentEntity.setProperty("time", formatTime);
 
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
     datastore.put(commentEntity);
@@ -60,8 +69,10 @@ public class DataServlet extends HttpServlet {
     for (Entity entity : storedComments.asIterable()) {
       String name = (String) entity.getProperty("name");
       String comment = (String) entity.getProperty("comment");
+      String date = (String) entity.getProperty("date");
+      String time = (String) entity.getProperty("time");
 
-      comments.add(new Comment(name, comment));
+      comments.add(new Comment(name, comment, date, time));
     }
 
     Gson gson = new GsonBuilder().setPrettyPrinting().create();
