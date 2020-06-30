@@ -168,11 +168,17 @@ function resetTicTacToe() {
 async function updateComments() {
   const response = await fetch('/comments');
   const msg = await response.json();
-  
+
   const commentContainer = document.getElementById('content-container');
 
   for (let numComment = 0; numComment < msg.length; numComment++) {
-    commentContainer.appendChild(createNameElement(msg[numComment].name, msg[numComment].date, msg[numComment].time));    
+    commentContainer.appendChild(
+      createNameElement(
+        msg[numComment].name,
+        msg[numComment].date,
+        msg[numComment].time
+      )
+    );
     commentContainer.appendChild(createCommentElement(msg[numComment].comment));
   }
 }
@@ -183,10 +189,10 @@ async function updateComments() {
 function createNameElement(name, date, time) {
   const h3Element = document.createElement('h3');
   h3Element.innerText = name;
-  h3Element.className = "commenter-name";
+  h3Element.className = 'commenter-name';
   const pElement = document.createElement('p');
-  pElement.innerText = date + " at " + time + " GMT";
-  pElement.className = "commenter-time";
+  pElement.innerText = date + ' at ' + time + ' GMT';
+  pElement.className = 'commenter-time';
   divElement = document.createElement('div');
   divElement.appendChild(h3Element);
   divElement.appendChild(pElement);
@@ -202,14 +208,16 @@ function createCommentElement(text) {
   return pElement;
 }
 
-function onloadCallback() { 
-  grecaptcha.render('recaptcha', {'sitekey': '6LdVqqsZAAAAALmVvlgvJIg8fA8dBuu4n_x1Uz6y'});
+function onloadCallback() {
+  grecaptcha.render('recaptcha', {
+    sitekey: '6LdVqqsZAAAAALmVvlgvJIg8fA8dBuu4n_x1Uz6y',
+  });
 }
 
 function verifyRecaptcha() {
-    if (grecaptcha.getResponse().length !== 0) {
-        document.getElementById('comment-form').submit();
-    } else {
-        alert('Please verify you are human!');
-    }
+  if (grecaptcha.getResponse().length !== 0) {
+    document.getElementById('comment-form').submit();
+  } else {
+    alert('Please verify you are human!');
+  }
 }
