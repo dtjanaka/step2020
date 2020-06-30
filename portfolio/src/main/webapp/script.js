@@ -164,6 +164,7 @@ function resetTicTacToe() {
 /**
  * Fetch content from data servlet and place in container.
  */
+
 async function updateComments() {
   const response = await fetch('/comments');
   const msg = await response.json();
