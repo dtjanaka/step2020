@@ -11,6 +11,11 @@ button, input {
   font-family: "Poppins", sans-serif;
 }
 
+button:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+}
+
 h1 {
   font-size: 50px;
   margin-bottom: 20px;

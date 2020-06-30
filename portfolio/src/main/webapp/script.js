@@ -28,9 +28,10 @@ function addRandomPrequelQuote() {
       ' seen in a life-form.',
     'I AM the Senate!',
     'I’m just a simple man, trying to make my way in the universe.',
+    'This is getting out of hand! Now, there are two of them!',
   ];
 
-  const quoteContainer = document.getElementById('quote-container');
+  const quoteContainer = document.getElementById('content-container');
 
   // Pick a random different quote.
   let quote = quoteContainer.innerText;
@@ -170,7 +171,7 @@ async function updateComments() {
   
   const commentContainer = document.getElementById('content-container');
 
-  for (let numComment = 0; numComment < Object.keys(msg).length; numComment++) {
+  for (let numComment = 0; numComment < msg.length; numComment++) {
     commentContainer.appendChild(createNameElement(msg[numComment].name, msg[numComment].date, msg[numComment].time));    
     commentContainer.appendChild(createCommentElement(msg[numComment].comment));
   }
@@ -199,4 +200,16 @@ function createCommentElement(text) {
   const pElement = document.createElement('p');
   pElement.innerText = text;
   return pElement;
+}
+
+function onloadCallback() { 
+  grecaptcha.render('recaptcha', {'sitekey': '6LdVqqsZAAAAALmVvlgvJIg8fA8dBuu4n_x1Uz6y'});
+}
+
+function verifyRecaptcha() {
+    if (grecaptcha.getResponse().length !== 0) {
+        document.getElementById('comment-form').submit();
+    } else {
+        alert('Please verify you are human!');
+    }
 }
