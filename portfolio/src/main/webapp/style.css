@@ -8,7 +8,9 @@ body {
 }
 
 button,
-input {
+input,
+select,
+option {
   font-family: "Poppins", sans-serif;
 }
 
@@ -252,6 +254,16 @@ button:hover {
 
 .commenter-time {
   margin-top: 0px;
+}
+
+#view-comments {
+  height: 30px;
+  width: 25%;
+  background-color: #009ddc;
+  border: none;
+  color: white;
+  cursor: pointer;
+  font-size: small;  
 }
 
 @media only screen and (max-width: 1600px) {

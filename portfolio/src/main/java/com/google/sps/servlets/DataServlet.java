@@ -87,6 +87,7 @@ public class DataServlet extends HttpServlet {
     }
 
     LocalDateTime now = LocalDateTime.now();
+    String nowString = now.toString();
     DateTimeFormatter date = DateTimeFormatter.ofPattern("d MMMM yyyy");
     DateTimeFormatter time = DateTimeFormatter.ofPattern("H:mm:ss a");
     String formatDate = now.format(date);
@@ -97,6 +98,7 @@ public class DataServlet extends HttpServlet {
     commentEntity.setProperty("comment", comment);
     commentEntity.setProperty("date", formatDate);
     commentEntity.setProperty("time", formatTime);
+    commentEntity.setProperty("iso8601", nowString);
 
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
     datastore.put(commentEntity);
@@ -109,19 +111,37 @@ public class DataServlet extends HttpServlet {
       throws IOException {
     response.setContentType("application/json");
 
-    Query query = new Query("Comment");
+    String numComments = request.getParameter("numComments");
+    String sortType = request.getParameter("sortType");
+    int nComments = 10;
+
+    if (!numComments.equals("All")) {
+        try {
+            nComments = Integer.parseInt(numComments);
+        } 
+        catch(Exception e) {
+        }
+    }
+
+    Query query = new Query("Comment").addSort("iso8601", sortType.equals("a") ? Query.SortDirection.ASCENDING : Query.SortDirection.DESCENDING);
+
 
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
     PreparedQuery storedComments = datastore.prepare(query);
 
     ArrayList<Comment> comments = new ArrayList<Comment>();
+    int maxComments = 0;
     for (Entity entity : storedComments.asIterable()) {
-      String name = (String)entity.getProperty("name");
-      String comment = (String)entity.getProperty("comment");
-      String date = (String)entity.getProperty("date");
-      String time = (String)entity.getProperty("time");
-
-      comments.add(new Comment(name, comment, date, time));
+        String name = (String)entity.getProperty("name");
+        String comment = (String)entity.getProperty("comment");
+        String date = (String)entity.getProperty("date");
+        String time = (String)entity.getProperty("time");
+        
+        maxComments++;
+        comments.add(new Comment(name, comment, date, time));
+        if (!numComments.equals("All") && maxComments >= nComments) {
+            break;
+        }
     }
 
     Gson gson = new GsonBuilder().setPrettyPrinting().create();

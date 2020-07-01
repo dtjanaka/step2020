@@ -80,12 +80,12 @@ let xando = [
   [0, 0, 0, 0, 0, 0, 0, 0] /* Xs */,
   [0, 0, 0, 0, 0, 0, 0, 0] /* Os */,
 ];
+let playerTurn = 0;
 
 /**
  * Process tic-tac-toe game.
  */
 function ticTacToe(cell) {
-  const playerTurn = +document.getElementById('player-turn').className;
   const whichCell = document.getElementById(cell);
   if (playerTurn === 0) {
     whichCell.innerText = '❌';
@@ -140,9 +140,9 @@ function ticTacToe(cell) {
   if (tied) {
     document.getElementById('player-turn').innerText = 'Draw! No winner.';
   } else {
-    document.getElementById('player-turn').className = playerTurn ? '0' : '1';
     document.getElementById('player-turn').innerText =
       'Player ' + (playerTurn ? 'X' : 'O') + ', make your move.';
+    playerTurn = +!playerTurn;
   }
 }
 
@@ -156,7 +156,7 @@ function resetTicTacToe() {
     document.getElementById(i).onclick = function () {
       ticTacToe(i);
     };
-    document.getElementById('player-turn').className = '0';
+    playerTurn = 0;
     document.getElementById('player-turn').innerText =
       'Player X, make your move.';
   }
@@ -166,10 +166,24 @@ function resetTicTacToe() {
  * Fetch content from data servlet and place in container.
  */
 async function updateComments() {
-  const response = await fetch('/comments');
+  let numCom = document.getElementById('num-comments');
+  let numComments = numCom.options[numCom.selectedIndex].text;
+  let howSort = document.getElementById('sort-type');
+  let sortType = howSort.options[howSort.selectedIndex].value;
+
+  console.log(numComments);
+  console.log(sortType);
+
+  let url = '/comments?' + 'numComments=' + numComments + '&sortType=' + sortType;
+
+  console.log(url);
+
+  const response = await fetch(url);
   const msg = await response.json();
 
   const commentContainer = document.getElementById('content-container');
+
+  commentContainer.innerHTML = '';
 
   for (let numComment = 0; numComment < msg.length; numComment++) {
     commentContainer.appendChild(
