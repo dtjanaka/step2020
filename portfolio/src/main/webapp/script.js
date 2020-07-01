@@ -164,13 +164,14 @@ function resetTicTacToe() {
 /**
  * Fetch content from data servlet and place in container.
  */
+
 async function updateComments() {
   const response = await fetch('/comments');
   const msg = await response.json();
   
   const commentContainer = document.getElementById('content-container');
 
-  for (let numComment = 0; numComment < Object.keys(msg).length; numComment++) {
+  for (let numComment = 0; numComment < msg.length; numComment++) {
     commentContainer.appendChild(createNameElement(msg[numComment].name));    
     commentContainer.appendChild(createCommentElement(msg[numComment].comment));
   }
