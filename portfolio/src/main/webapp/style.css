@@ -263,7 +263,7 @@ button:hover {
   border: none;
   color: white;
   cursor: pointer;
-  font-size: small;  
+  font-size: small;
 }
 
 @media only screen and (max-width: 1600px) {
@@ -276,6 +276,9 @@ button:hover {
 }
 
 @media only screen and (max-width: 1250px) {
+  #view-comments {
+    float: right;
+  }
   #content-container,
   p,
   h1,

@@ -171,12 +171,8 @@ async function updateComments() {
   let howSort = document.getElementById('sort-type');
   let sortType = howSort.options[howSort.selectedIndex].value;
 
-  console.log(numComments);
-  console.log(sortType);
-
-  let url = '/comments?' + 'numComments=' + numComments + '&sortType=' + sortType;
-
-  console.log(url);
+  let url =
+    '/comments?' + 'numComments=' + numComments + '&sortType=' + sortType;
 
   const response = await fetch(url);
   const msg = await response.json();
@@ -205,7 +201,7 @@ function createNameElement(name, date, time) {
   h3Element.innerText = name;
   h3Element.className = 'commenter-name';
   const pElement = document.createElement('p');
-  pElement.innerText = date + ' at ' + time + ' GMT';
+  pElement.innerText = date + ' at ' + time + ' GMT'; //TODO: display time in local timezone
   pElement.className = 'commenter-time';
   divElement = document.createElement('div');
   divElement.appendChild(h3Element);
@@ -234,4 +230,10 @@ function verifyRecaptcha() {
   } else {
     alert('Please verify you are human!');
   }
+}
+
+async function deleteData() {
+  const request = new Request('/delete-data', { method: 'POST' });
+  const response = await fetch(request);
+  updateComments();
 }

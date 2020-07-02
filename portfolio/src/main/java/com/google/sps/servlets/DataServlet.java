@@ -116,15 +116,15 @@ public class DataServlet extends HttpServlet {
     int nComments = 10;
 
     if (!numComments.equals("All")) {
-        try {
-            nComments = Integer.parseInt(numComments);
-        } 
-        catch(Exception e) {
-        }
+      try {
+        nComments = Integer.parseInt(numComments);
+      } catch (Exception e) {
+      }
     }
 
-    Query query = new Query("Comment").addSort("iso8601", sortType.equals("a") ? Query.SortDirection.ASCENDING : Query.SortDirection.DESCENDING);
-
+    Query query = new Query("Comment").addSort(
+        "iso8601", sortType.equals("asc") ? Query.SortDirection.ASCENDING
+                                          : Query.SortDirection.DESCENDING);
 
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
     PreparedQuery storedComments = datastore.prepare(query);
@@ -132,16 +132,16 @@ public class DataServlet extends HttpServlet {
     ArrayList<Comment> comments = new ArrayList<Comment>();
     int maxComments = 0;
     for (Entity entity : storedComments.asIterable()) {
-        String name = (String)entity.getProperty("name");
-        String comment = (String)entity.getProperty("comment");
-        String date = (String)entity.getProperty("date");
-        String time = (String)entity.getProperty("time");
-        
-        maxComments++;
-        comments.add(new Comment(name, comment, date, time));
-        if (!numComments.equals("All") && maxComments >= nComments) {
-            break;
-        }
+      String name = (String)entity.getProperty("name");
+      String comment = (String)entity.getProperty("comment");
+      String date = (String)entity.getProperty("date");
+      String time = (String)entity.getProperty("time");
+
+      maxComments++;
+      comments.add(new Comment(name, comment, date, time));
+      if (!numComments.equals("All") && maxComments >= nComments) {
+        break;
+      }
     }
 
     Gson gson = new GsonBuilder().setPrettyPrinting().create();
