@@ -28,9 +28,10 @@ function addRandomPrequelQuote() {
       ' seen in a life-form.',
     'I AM the Senate!',
     'I’m just a simple man, trying to make my way in the universe.',
+    'This is getting out of hand! Now, there are two of them!',
   ];
 
-  const quoteContainer = document.getElementById('quote-container');
+  const quoteContainer = document.getElementById('content-container');
 
   // Pick a random different quote.
   let quote = quoteContainer.innerText;
@@ -79,12 +80,12 @@ let xando = [
   [0, 0, 0, 0, 0, 0, 0, 0] /* Xs */,
   [0, 0, 0, 0, 0, 0, 0, 0] /* Os */,
 ];
+let playerTurn = 0;
 
 /**
  * Process tic-tac-toe game.
  */
 function ticTacToe(cell) {
-  const playerTurn = +document.getElementById('player-turn').className;
   const whichCell = document.getElementById(cell);
   if (playerTurn === 0) {
     whichCell.innerText = '❌';
@@ -139,9 +140,9 @@ function ticTacToe(cell) {
   if (tied) {
     document.getElementById('player-turn').innerText = 'Draw! No winner.';
   } else {
-    document.getElementById('player-turn').className = playerTurn ? '0' : '1';
     document.getElementById('player-turn').innerText =
       'Player ' + (playerTurn ? 'X' : 'O') + ', make your move.';
+    playerTurn = +!playerTurn;
   }
 }
 
@@ -155,7 +156,7 @@ function resetTicTacToe() {
     document.getElementById(i).onclick = function () {
       ticTacToe(i);
     };
-    document.getElementById('player-turn').className = '0';
+    playerTurn = 0;
     document.getElementById('player-turn').innerText =
       'Player X, make your move.';
   }
@@ -166,13 +167,29 @@ function resetTicTacToe() {
  */
 
 async function updateComments() {
-  const response = await fetch('/comments');
+  let numCom = document.getElementById('num-comments');
+  let numComments = numCom.options[numCom.selectedIndex].text;
+  let howSort = document.getElementById('sort-type');
+  let sortType = howSort.options[howSort.selectedIndex].value;
+
+  let url =
+    '/comments?' + 'numComments=' + numComments + '&sortType=' + sortType;
+
+  const response = await fetch(url);
   const msg = await response.json();
-  
+
   const commentContainer = document.getElementById('content-container');
 
+  commentContainer.innerHTML = '';
+
   for (let numComment = 0; numComment < msg.length; numComment++) {
-    commentContainer.appendChild(createNameElement(msg[numComment].name));    
+    commentContainer.appendChild(
+      createNameElement(
+        msg[numComment].name,
+        msg[numComment].date,
+        msg[numComment].time
+      )
+    );
     commentContainer.appendChild(createCommentElement(msg[numComment].comment));
   }
 }
@@ -180,10 +197,17 @@ async function updateComments() {
 /**
  * Creates a <h3> element containing commenter name.
  */
-function createNameElement(text) {
+function createNameElement(name, date, time) {
   const h3Element = document.createElement('h3');
-  h3Element.innerText = text;
-  return h3Element;
+  h3Element.innerText = name;
+  h3Element.className = 'commenter-name';
+  const pElement = document.createElement('p');
+  pElement.innerText = date + ' at ' + time + ' GMT'; //TODO: display time in local timezone
+  pElement.className = 'commenter-time';
+  divElement = document.createElement('div');
+  divElement.appendChild(h3Element);
+  divElement.appendChild(pElement);
+  return divElement;
 }
 
 /**
@@ -193,4 +217,24 @@ function createCommentElement(text) {
   const pElement = document.createElement('p');
   pElement.innerText = text;
   return pElement;
+}
+
+function onloadCallback() {
+  grecaptcha.render('recaptcha', {
+    sitekey: '6LdVqqsZAAAAALmVvlgvJIg8fA8dBuu4n_x1Uz6y',
+  });
+}
+
+function verifyRecaptcha() {
+  if (grecaptcha.getResponse().length !== 0) {
+    document.getElementById('comment-form').submit();
+  } else {
+    alert('Please verify you are human!');
+  }
+}
+
+async function deleteData() {
+  const request = new Request('/delete-data', { method: 'POST' });
+  const response = await fetch(request);
+  updateComments();
 }
