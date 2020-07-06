@@ -39,6 +39,8 @@ import org.json.JSONObject;
 
 @WebServlet("/comments")
 public class DataServlet extends HttpServlet {
+  private static final String ALL_COMMENTS = "All";
+  private static final String ASCENDING_COMMENTS = "asc";
 
   public synchronized boolean isValidCaptcha(String secretKey,
                                              String response) {
@@ -111,20 +113,20 @@ public class DataServlet extends HttpServlet {
       throws IOException {
     response.setContentType("application/json");
 
-    String numComments = request.getParameter("numComments");
+    String numCommentsString = request.getParameter("numComments");
     String sortType = request.getParameter("sortType");
-    int nComments = 10;
+    int numComments = 10; // Show 10 comments by default
 
-    if (!numComments.equals("All")) {
+    if (!numCommentsString.equals(ALL_COMMENTS)) {
       try {
-        nComments = Integer.parseInt(numComments);
+        numComments = Integer.parseInt(numCommentsString);
       } catch (Exception e) {
       }
     }
 
     Query query = new Query("Comment").addSort(
-        "iso8601", sortType.equals("asc") ? Query.SortDirection.ASCENDING
-                                          : Query.SortDirection.DESCENDING);
+        "iso8601", sortType.equals(ASCENDING_COMMENTS) ? Query.SortDirection.ASCENDING
+                                                       : Query.SortDirection.DESCENDING);
 
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
     PreparedQuery storedComments = datastore.prepare(query);
@@ -139,7 +141,7 @@ public class DataServlet extends HttpServlet {
 
       maxComments++;
       comments.add(new Comment(name, comment, date, time));
-      if (!numComments.equals("All") && maxComments >= nComments) {
+      if (!numCommentsString.equals(ALL_COMMENTS) && maxComments >= numComments) {
         break;
       }
     }
