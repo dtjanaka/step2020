@@ -237,3 +237,113 @@ async function deleteData() {
   const response = await fetch(request);
   updateComments();
 }
+
+/** 
+ * Creates a map and adds it to the page.
+ */
+function createMap() {
+  const map = new google.maps.Map(
+      document.getElementById('map'),
+      {
+        center: {lat: 37.42341667, lng: -121.97611111}, 
+        zoom: 20
+      });
+  const GRTStartMarker = new google.maps.Marker({
+    position: {lat: 37.423404, lng: -121.975947},
+    map: map,
+    title: 'Beginning of the Guadalupe River Trail'
+  });
+
+  // Coordinates from Directions API
+  // https://maps.googleapis.com/maps/api/directions/json?origin=37.423404,-121.975947&destination=37.400976,-121.941955&avoid=highways&mode=bicycling&key=AIzaSyD1Z43pgCsowhu2vY_ue5MasPUST6TDiew
+  const GRTCoordinates = [
+    {lat: 37.423404, lng: -121.975947},
+    {lat: 37.42328, lng: -121.97517},
+    {lat: 37.42316, lng: -121.97415},
+    {lat: 37.423, lng: -121.97298},
+    {lat: 37.42282, lng: -121.97185},
+    {lat: 37.42264, lng: -121.97118},
+    {lat: 37.42244, lng: -121.97062},
+    {lat: 37.42232, lng: -121.97037},
+    {lat: 37.42219, lng: -121.97013},
+    {lat: 37.4219, lng: -121.96966},
+    {lat: 37.4216, lng: -121.96924},
+    {lat: 37.42131, lng: -121.96889},
+    {lat: 37.42088, lng: -121.96848},
+    {lat: 37.42032, lng: -121.96805},
+    {lat: 37.42007, lng: -121.96789},
+    {lat: 37.41982, lng: -121.96779},
+    {lat: 37.41938, lng: -121.96765},
+    {lat: 37.41877, lng: -121.96746},
+    {lat: 37.41864, lng: -121.96742},
+    {lat: 37.41833, lng: -121.96734},
+    {lat: 37.41795, lng: -121.96715},
+    {lat: 37.41777, lng: -121.96701},
+    {lat: 37.41773, lng: -121.96695},
+    {lat: 37.41772, lng: -121.96691},
+    {lat: 37.41713, lng: -121.9664},
+    {lat: 37.41539, lng: -121.96485},
+    {lat: 37.41429, lng: -121.96387},
+    {lat: 37.41314, lng: -121.96288},
+    {lat: 37.41165, lng: -121.96155},
+    {lat: 37.41113, lng: -121.96112},
+    {lat: 37.41104, lng: -121.96109},
+    {lat: 37.41086, lng: -121.96095},
+    {lat: 37.41051, lng: -121.9606},
+    {lat: 37.41014, lng: -121.96018},
+    {lat: 37.41007, lng: -121.96004},
+    {lat: 37.41, lng: -121.95984},
+    {lat: 37.40993, lng: -121.95959},
+    {lat: 37.40973, lng: -121.95898},
+    {lat: 37.40961, lng: -121.95853},
+    {lat: 37.40924, lng: -121.95729},
+    {lat: 37.40901, lng: -121.95665},
+    {lat: 37.40869, lng: -121.95587},
+    {lat: 37.4084, lng: -121.95525},
+    {lat: 37.40825, lng: -121.95498},
+    {lat: 37.40794, lng: -121.95446},
+    {lat: 37.4075, lng: -121.95382},
+    {lat: 37.40701, lng: -121.9532},
+    {lat: 37.40658, lng: -121.95275},
+    {lat: 37.40584, lng: -121.95212},
+    {lat: 37.40564, lng: -121.952},
+    {lat: 37.4053, lng: -121.9518},
+    {lat: 37.40489, lng: -121.95146},
+    {lat: 37.40464, lng: -121.95121},
+    {lat: 37.40426, lng: -121.95072},
+    {lat: 37.40426, lng: -121.95072},
+    {lat: 37.40395, lng: -121.95017},
+    {lat: 37.40369, lng: -121.94969},
+    {lat: 37.40348, lng: -121.94936},
+    {lat: 37.40331, lng: -121.94913},
+    {lat: 37.40303, lng: -121.94878},
+    {lat: 37.40245, lng: -121.9481},
+    {lat: 37.40196, lng: -121.94748},
+    {lat: 37.40173, lng: -121.94699},
+    {lat: 37.40163, lng: -121.94674},
+    {lat: 37.40148, lng: -121.94631},
+    {lat: 37.40137, lng: -121.94588},
+    {lat: 37.40127, lng: -121.94537},
+    {lat: 37.40121, lng: -121.94475},
+    {lat: 37.40121, lng: -121.94447},
+    {lat: 37.40125, lng: -121.94399},
+    {lat: 37.4013, lng: -121.94344},
+    {lat: 37.4013, lng: -121.94313},
+    {lat: 37.40128, lng: -121.94284},
+    {lat: 37.4012, lng: -121.94247},
+    {lat: 37.401, lng: -121.942},
+    {lat: 37.40097, lng: -121.94195}
+  ];
+
+  console.log(GRTCoordinates);
+
+  const GRTPath = new google.maps.Polyline({
+    path: GRTCoordinates,
+    geodesic: true,
+    strokeColor: '#FF0000',
+    strokeOpacity: 1.0,
+    strokeWeight: 2
+  });
+
+  GRTPath.setMap(map);
+}

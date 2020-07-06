@@ -9,11 +9,13 @@
       rel="stylesheet"
     />
     <link rel="stylesheet" href="style.css" />
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyD1Z43pgCsowhu2vY_ue5MasPUST6TDiew"></script>
     <script src="script.js"></script>
   </head>
-  <body>
+  <body onload="createMap()">
     <div id="content">
       <h1>Everything Else</h1>
+        <div id="map"></div>
         <iframe
             id="resp-strava"
             frameborder="0"
@@ -32,27 +34,37 @@
           allowfullscreen
         ></iframe>
       </div>
-      <a id="pfp-link" href="/images/IMG_2713.jpg">
-        <img id="pfp" class="center responsive" src="/images/IMG_2713.jpg" />
-      </a>
-      <a id="pfp-link" href="/images/IMG_2715.jpg">
-        <img id="pfp" class="center responsive" src="/images/IMG_2715.jpg" />
-      </a>
-      <a id="pfp-link" href="/images/IMG_2718.jpg">
-        <img id="pfp" class="center responsive" src="/images/IMG_2718.jpg" />
-      </a>
-      <a id="pfp-link" href="/images/IMG_2722.jpg">
-        <img id="pfp" class="center responsive" src="/images/IMG_2722.jpg" />
-      </a>
-      <a id="pfp-link" href="/images/IMG_8732.jpg">
-        <img id="pfp" class="center responsive" src="/images/IMG_8732.jpg" />
-      </a>
-      <a id="pfp-link" href="/images/IMG_8795.jpg">
-        <img id="pfp" class="center responsive" src="/images/IMG_8795.jpg" />
-      </a>
-      <a id="pfp-link" href="/images/IMG_8819.jpg">
-        <img id="pfp" class="center responsive" src="/images/IMG_8819.jpg" />
-      </a>
+      <p></p>
+      <div class="slideshow-container">
+        <a href="/images/IMG_8732.jpg">
+            <img class="slideshow-1" src="/images/IMG_8732.jpg" />
+        </a>
+        <a href="/images/IMG_8795.jpg">
+            <img class="slideshow-1" src="/images/IMG_8795.jpg" />
+        </a>
+        <a href="/images/IMG_8819.jpg">
+            <img class="slideshow-1" src="/images/IMG_8819.jpg" />
+        </a>
+      </div>
+      <div>
+        <button onclick="" class="slideshow-button">&#10094;</button>
+        <button onclick="" class="slideshow-button">&#10095;</button>
+      </div>
+      <div class="slideshow-container">
+        <a href="/images/IMG_2715.jpg">
+            <img class="slideshow-2" src="/images/IMG_2715.jpg" />
+        </a>
+        <a href="/images/IMG_2718.jpg">
+            <img class="slideshow-2" src="/images/IMG_2718.jpg" />
+        </a>
+        <a href="/images/IMG_2722.jpg">
+            <img class="slideshow-2" src="/images/IMG_2722.jpg" />
+        </a>
+      </div>
+      <div>
+        <button onclick="" class="slideshow-button">&#10094;</button>
+        <button onclick="" class="slideshow-button">&#10095;</button>
+      </div>      
     </div>
   </body>
 </html>

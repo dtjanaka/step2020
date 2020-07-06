@@ -271,6 +271,36 @@ button:hover {
   font-size: small;
 }
 
+#map {
+  height: 500px;
+  width: 100%;
+}
+
+.slideshow-container {
+  width: 100%;
+  padding-bottom: 75%;
+  position: relative;
+  clear: both;
+}
+
+.slideshow-1, 
+.slideshow-2 {
+  position: absolute;
+  width: 100%;
+}
+
+.slideshow-button {
+  float:left;
+  height: 50px;
+  width: 50%;
+  background-color: #009ddc;
+  border: none;
+  color: white;
+  cursor: pointer;
+  font-size: large;
+  margin-bottom: 20px;
+}
+
 @media only screen and (max-width: 1600px) {
   .misc-button {
     width: 100%;
