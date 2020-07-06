@@ -165,6 +165,7 @@ function resetTicTacToe() {
 /**
  * Fetch content from data servlet and place in container.
  */
+
 async function updateComments() {
   let numCom = document.getElementById('num-comments');
   let numComments = numCom.options[numCom.selectedIndex].text;
