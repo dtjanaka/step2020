@@ -58,6 +58,9 @@ function changeProfilePic() {
     'pfp_mtr.jpg',
     'pfp_sol.jpg',
     'pfp_uk.jpg',
+    'pfp_gwc.jpg',
+    'pfp_mer.jpg',
+    'pfp_terra.jpg',
   ];
 
   // Pick random different image.
@@ -189,7 +192,7 @@ async function updateComments() {
         msg[numComment].time
       )
     );
-    commentContainer.appendChild(createCommentElement(msg[numComment].comment));
+    commentContainer.appendChild(createPElement(msg[numComment].comment));
   }
 }
 
@@ -210,9 +213,9 @@ function createNameElement(name, date, time) {
 }
 
 /**
- * Creates a <p> element containing comment.
+ * Creates a <p> element containing text.
  */
-function createCommentElement(text) {
+function createPElement(text) {
   const pElement = document.createElement('p');
   pElement.innerText = text;
   return pElement;
@@ -238,6 +241,15 @@ async function deleteData() {
   updateComments();
 }
 
+function createMiscButtonElement(text) {
+    const buttonElement = document.createElement('button');
+    buttonElement.innerText = text;
+    buttonElement.className = 'misc-button';
+    return buttonElement;
+}
+
+let trailInfoDisplayed = false;
+
 /** 
  * Creates a map and adds it to the page.
  */
@@ -245,8 +257,8 @@ function createMap() {
   const map = new google.maps.Map(
       document.getElementById('map'),
       {
-        center: {lat: 37.42341667, lng: -121.97611111}, 
-        zoom: 20
+        center: {lat: 37.412177, lng: -121.959926},
+        zoom: 14
       });
   const GRTStartMarker = new google.maps.Marker({
     position: {lat: 37.423404, lng: -121.975947},
@@ -254,7 +266,25 @@ function createMap() {
     title: 'Beginning of the Guadalupe River Trail'
   });
 
-  // Coordinates from Directions API
+  const GRTBridgeMarker = new google.maps.Marker({
+    position: {lat: 37.40097, lng: -121.94195},
+    map: map,
+    title: 'Guadalupe River Trail bridge'
+  });
+
+  GRTStartMarker.addListener('click', function() {
+      //if (!trailInfoDisplayed) {
+        document.getElementById('map').style.width = '50%';
+        const mapInfoContainer = document.getElementById('half-content-container');
+        mapInfoContainer.innerHTML = '<a href="/images/IMG_2686.jpg"><img src="/images/IMG_2686.jpg" style="width: 100%" /></a>';
+        mapInfoContainer.appendChild(createPElement('Me at the start of the trail! I ride here frequently.'));
+        mapInfoContainer.appendChild(createPElement('The bike is a white Poseidon Expressway-SXL, a flat bar road bike with fixed gears (46T/16T gear ratio), a 6061 aluminum frame, and 700x25mm tires.'));
+        mapInfoContainer.appendChild(createMiscButtonElement('Close'));
+        trailInfoDisplayed = true;
+      //}
+  });
+
+  // Coordinates generated with Directions API
   // https://maps.googleapis.com/maps/api/directions/json?origin=37.423404,-121.975947&destination=37.400976,-121.941955&avoid=highways&mode=bicycling&key=AIzaSyD1Z43pgCsowhu2vY_ue5MasPUST6TDiew
   const GRTCoordinates = [
     {lat: 37.423404, lng: -121.975947},
@@ -334,8 +364,6 @@ function createMap() {
     {lat: 37.401, lng: -121.942},
     {lat: 37.40097, lng: -121.94195}
   ];
-
-  console.log(GRTCoordinates);
 
   const GRTPath = new google.maps.Polyline({
     path: GRTCoordinates,
