@@ -15,8 +15,13 @@
   <body onload="createMap()">
     <div id="content">
       <h1>Everything Else</h1>
-        <div id="map"></div>
-        <div id="half-content-container"></div>
+      <h2>Cycling</h2>
+      <p class="text-block">
+        In my free time, I sometimes like to go cycling, mostly along the
+        Guadalupe River Trail. I track my rides with the Strava app for which a
+        widget of my weekly activity is shown. A map of one of my common routes
+        can also be found below.
+      </p>
       <iframe
         id="resp-strava"
         frameborder="0"
@@ -24,8 +29,22 @@
         scrolling="no"
         src="https://www.strava.com/athletes/43951123/activity-summary/77224f8bfa6c9894d12700c94137ee4827ef735d"
       ></iframe>
-      <a href="https://what-a-resilient-bridge.weebly.com/"><button class="center misc-button">Popsicle stick bridge blog</button></a>
-      <div class="resp-container">
+      <div id="map"></div>
+      <div id="half-content-container"></div>
+      <h2>Popsicle Stick Bridges</h2>
+      <p class="text-block">
+        As part of my high school AP Physics 1 course, we built and tested
+        bridges made of only popsicle sticks and wood glue. The blog and video
+        below provide insight into our group's design process and results. In
+        the end, our bridge held 565 pounds while only weighing 1.0494 pounds,
+        giving it an efficiency of 538.
+      </p>
+      <a href="https://what-a-resilient-bridge.weebly.com/"
+        ><button class="center misc-button" id="bridge-blog">
+          Bridge blog
+        </button></a
+      >
+      <div class="resp-container" id="bridge-video">
         <iframe
           class="responsive-iframe"
           src="https://www.youtube.com/embed/cG5Qb2XNFQU"
@@ -35,37 +54,25 @@
           allowfullscreen
         ></iframe>
       </div>
-      <p></p>
-      <div class="slideshow-container">
-        <a href="/images/IMG_8732.jpg">
-            <img class="slideshow-1" src="/images/IMG_8732.jpg" />
-        </a>
-        <a href="/images/IMG_8795.jpg">
-            <img class="slideshow-1" src="/images/IMG_8795.jpg" />
-        </a>
-        <a href="/images/IMG_8819.jpg">
-            <img class="slideshow-1" src="/images/IMG_8819.jpg" />
-        </a>
-      </div>
+      <a href="/images/IMG_8732.jpg">
+        <img class="slideshow" src="/images/IMG_8732.jpg" />
+      </a>
       <div>
         <button onclick="" class="slideshow-button">&#10094;</button>
         <button onclick="" class="slideshow-button">&#10095;</button>
       </div>
-      <div class="slideshow-container">
-        <a href="/images/IMG_2715.jpg">
-            <img class="slideshow-2" src="/images/IMG_2715.jpg" />
-        </a>
-        <a href="/images/IMG_2718.jpg">
-            <img class="slideshow-2" src="/images/IMG_2718.jpg" />
-        </a>
-        <a href="/images/IMG_2722.jpg">
-            <img class="slideshow-2" src="/images/IMG_2722.jpg" />
-        </a>
-      </div>
+      <p>
+        The summer after this project, I made a bridge out of coffee stirrers
+        instead of popsicle sticks just for fun. Unlike the popsicle stick
+        bridge, this one was never tested and so remains intact.
+      </p>
+      <a href="/images/IMG_2715.jpg">
+        <img class="slideshow" src="/images/IMG_2715.jpg" />
+      </a>
       <div>
-        <button onclick="" class="slideshow-button">&#10094;</button>
-        <button onclick="" class="slideshow-button">&#10095;</button>
-      </div>      
+        <button onclick="" class="slideshow-button stirrer">&#10094;</button>
+        <button onclick="" class="slideshow-button stirrer">&#10095;</button>
+      </div>
     </div>
   </body>
 </html>
