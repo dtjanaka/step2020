@@ -276,7 +276,6 @@ button:hover {
   height: 750px;
   width: 100%;
   float: left;
-  margin-bottom: 40px;
 }
 
 .slideshow {
@@ -303,17 +302,15 @@ button:hover {
     padding-left: 10px;
     float: left;
     width: 50%;
-}
-
-#half-content-container {
-  text-align: justify;
+    text-align: justify;
 }
 
 #half-content-container button {
   width: 100%;
 }
 
-#bridge-video, .stirrer {
+#bridge-video,
+.stirrer {
     margin-bottom: 20px;
 }
 
