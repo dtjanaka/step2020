@@ -227,9 +227,9 @@ button:hover {
 }
 
 #resp-strava {
-    width: 100%;
-    height: 160px;
-    margin-bottom: 20px;
+  width: 100%;
+  height: 160px;
+  margin-bottom: 20px;
 }
 
 .responsive-iframe {
@@ -243,7 +243,8 @@ button:hover {
   border: none;
 }
 
-#reset, #bridge-blog {
+#reset,
+#bridge-blog {
   margin-top: 20px;
   margin-bottom: 20px;
 }
@@ -287,7 +288,7 @@ button:hover {
 }
 
 .slideshow-button {
-  float:left;
+  float: left;
   height: 50px;
   width: 50%;
   background-color: #009ddc;
@@ -299,10 +300,10 @@ button:hover {
 }
 
 #half-content-container {
-    padding-left: 10px;
-    float: left;
-    width: 50%;
-    text-align: justify;
+  padding-left: 10px;
+  float: left;
+  width: 50%;
+  text-align: justify;
 }
 
 #half-content-container button {
@@ -311,7 +312,16 @@ button:hover {
 
 #bridge-video,
 .stirrer {
-    margin-bottom: 20px;
+  margin-bottom: 20px;
+}
+
+#bridge-video {
+  width: 100%;
+}
+
+#bridge-text {
+  width: 100%;
+  float: left;
 }
 
 @media only screen and (max-width: 1600px) {
