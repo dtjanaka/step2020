@@ -77,7 +77,7 @@ public class DataServlet extends HttpServlet {
 
       return json.getBoolean("success");
     } catch (Exception e) {
-        System.out.println("Error verifying reCAPTCHA");
+      System.out.println("Error verifying reCAPTCHA");
     }
     return false;
   }
@@ -144,29 +144,29 @@ public class DataServlet extends HttpServlet {
     boolean forProfile = false;
 
     if (sortType == null) {
-        sortType = "dsc";
+      sortType = "dsc";
     }
 
     if (numComments == null) {
-        numComments = "10";
+      numComments = "10";
     }
 
     if (!numComments.equals("All")) {
       try {
         nComments = Integer.parseInt(numComments);
       } catch (Exception e) {
-          System.out.println("Error parsing argument to integer");
+        System.out.println("Error parsing argument to integer");
       }
     }
 
     if (forProfileString == null) {
-        forProfileString = "false";
+      forProfileString = "false";
     }
 
     try {
-        forProfile = Boolean.parseBoolean(forProfileString);
+      forProfile = Boolean.parseBoolean(forProfileString);
     } catch (Exception e) {
-        System.out.println("Error parsing argument to boolean");
+      System.out.println("Error parsing argument to boolean");
     }
 
     Query query = new Query("Comment").addSort(
@@ -174,10 +174,10 @@ public class DataServlet extends HttpServlet {
                                           : SortDirection.DESCENDING);
 
     if (forProfile) {
-        Filter propertyFilter =
-            new FilterPredicate("uid", FilterOperator.EQUAL, uid);
+      Filter propertyFilter =
+          new FilterPredicate("uid", FilterOperator.EQUAL, uid);
 
-        query.setFilter(propertyFilter);
+      query.setFilter(propertyFilter);
     }
 
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
@@ -192,7 +192,7 @@ public class DataServlet extends HttpServlet {
       String time = (String)entity.getProperty("time");
 
       maxComments++;
-      comments.add(new Comment(name, comment, date, time, null)); 
+      comments.add(new Comment(name, comment, date, time, null));
       if (!numComments.equals("All") && maxComments >= nComments) {
         break;
       }

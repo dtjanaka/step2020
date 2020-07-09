@@ -7,7 +7,8 @@ class Comment {
   String time;
   String uid;
 
-  public Comment(String name, String comment, String date, String time, String uid) {
+  public Comment(String name, String comment, String date, String time,
+                 String uid) {
     this.name = name;
     this.comment = comment;
     this.uid = uid;

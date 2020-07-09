@@ -19,15 +19,15 @@ public class Login extends HttpServlet {
 
     UserService userService = UserServiceFactory.getUserService();
     if (userService.isUserLoggedIn()) {
-        String logoutUrl = userService.createLogoutURL("/comments.html");
-        Gson gson = new GsonBuilder().setPrettyPrinting().create();
-        String userInfo = gson.toJson(new UserInfo(true, logoutUrl));
-        response.getWriter().println(userInfo);
+      String logoutUrl = userService.createLogoutURL("/comments.html");
+      Gson gson = new GsonBuilder().setPrettyPrinting().create();
+      String userInfo = gson.toJson(new UserInfo(true, logoutUrl));
+      response.getWriter().println(userInfo);
     } else {
-        String loginUrl = userService.createLoginURL("/comments.html");
-        Gson gson = new GsonBuilder().setPrettyPrinting().create();
-        String userInfo = gson.toJson(new UserInfo(false, loginUrl));
-        response.getWriter().println(userInfo);
+      String loginUrl = userService.createLoginURL("/comments.html");
+      Gson gson = new GsonBuilder().setPrettyPrinting().create();
+      String userInfo = gson.toJson(new UserInfo(false, loginUrl));
+      response.getWriter().println(userInfo);
     }
   }
 }

@@ -178,8 +178,13 @@ async function updateComments(profile) {
   let sortType = howSort.options[howSort.selectedIndex].value;
 
   let url =
-    '/comments?' + 'numComments=' + numComments + '&sortType=' + sortType + 
-    '&profile=' + profile;
+    '/comments?' +
+    'numComments=' +
+    numComments +
+    '&sortType=' +
+    sortType +
+    '&profile=' +
+    profile;
 
   const response = await fetch(url);
   const msg = await response.json();
@@ -295,7 +300,7 @@ function createMap() {
         'half-content-container'
       );
       mapInfoContainer.innerHTML =
-        '<a href="/images/IMG_2686.jpg">' + 
+        '<a href="/images/IMG_2686.jpg">' +
         '<img src="/images/IMG_2686.jpg" style="width: 100%" /></a>';
       mapInfoContainer.appendChild(
         createPElement('Me at the start of the trail! I ride here frequently.')
@@ -303,8 +308,8 @@ function createMap() {
       mapInfoContainer.appendChild(
         createPElement(
           'The bike is a white Poseidon Expressway-SXL, a flat bar ' +
-          'road bike with fixed gears (46T/16T gear ratio), ' +
-          'a 6061 aluminum frame, and 700x25mm tires.'
+            'road bike with fixed gears (46T/16T gear ratio), ' +
+            'a 6061 aluminum frame, and 700x25mm tires.'
         )
       );
       mapInfoContainer.appendChild(createCloseButtonElement());
@@ -322,8 +327,10 @@ function createMap() {
         '<a href="/images/IMG_2744.jpg">' +
         '<img src="/images/IMG_2744.jpg" style="width: 100%" /></a>';
       mapInfoContainer.appendChild(
-        createPElement('A bridge across the Guadalupe River connecting ' + 
-        'the lower and upper trails.')
+        createPElement(
+          'A bridge across the Guadalupe River connecting ' +
+            'the lower and upper trails.'
+        )
       );
       mapInfoContainer.appendChild(createCloseButtonElement());
       trailInfoDisplayed = true;
@@ -337,7 +344,7 @@ function createMap() {
         'half-content-container'
       );
       mapInfoContainer.innerHTML =
-        '<a href="/images/IMG_2686.jpg">' + 
+        '<a href="/images/IMG_2686.jpg">' +
         '<img src="/images/IMG_2686.jpg" style="width: 100%" /></a>';
       mapInfoContainer.appendChild(
         createPElement('Me at the start of the trail! I ride here frequently.')
@@ -345,8 +352,8 @@ function createMap() {
       mapInfoContainer.appendChild(
         createPElement(
           'The bike is a white Poseidon Expressway-SXL, a flat bar ' +
-          'road bike with fixed gears (46T/16T gear ratio), ' +
-          'a 6061 aluminum frame, and 700x25mm tires.'
+            'road bike with fixed gears (46T/16T gear ratio), ' +
+            'a 6061 aluminum frame, and 700x25mm tires.'
         )
       );
       mapInfoContainer.appendChild(createCloseButtonElement());
@@ -398,16 +405,16 @@ function changeSlide(slideshowNum, direction) {
  * Create login or logout button.
  *
  * @param type  0 for login, 1 for logout
- * @param url   link for login/logout    
+ * @param url   link for login/logout
  */
 function createLoginLogout(type, url) {
-    let link = document.createElement('a');
-    link.href = url;
-    let buttonElement = document.createElement('button');
-    buttonElement.classList.add('center', 'misc-button');
-    buttonElement.innerText = type ? 'Logout' : 'Login';
-    link.appendChild(buttonElement);
-    return link;    
+  let link = document.createElement('a');
+  link.href = url;
+  let buttonElement = document.createElement('button');
+  buttonElement.classList.add('center', 'misc-button');
+  buttonElement.innerText = type ? 'Logout' : 'Login';
+  link.appendChild(buttonElement);
+  return link;
 }
 
 /**
@@ -418,12 +425,14 @@ async function onloadComments(profile) {
   const response = await fetch('/login-status');
   const result = await response.json();
   if (result.loggedIn) {
-      document.getElementById('comments-logged-in').style.display = 'initial';
-      document.getElementById('login-logout').appendChild(
-          createLoginLogout(1, result.url));
-      updateComments(profile);
+    document.getElementById('comments-logged-in').style.display = 'initial';
+    document
+      .getElementById('login-logout')
+      .appendChild(createLoginLogout(1, result.url));
+    updateComments(profile);
   } else {
-      document.getElementById('login-logout').appendChild(
-          createLoginLogout(0, result.url));      
+    document
+      .getElementById('login-logout')
+      .appendChild(createLoginLogout(0, result.url));
   }
 }

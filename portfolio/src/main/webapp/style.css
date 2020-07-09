@@ -110,12 +110,14 @@ td {
   color: white;
 }
 
-#links button, #links-2 button {
+#links button,
+#links-2 button {
   width: 100%;
   height: 50px;
 }
 
-#links, #links-2 {
+#links,
+#links-2 {
   text-align: center;
 }
 
@@ -324,8 +326,9 @@ button:hover {
   float: left;
 }
 
-#comments-logged-in, #profile-logged-in {
-  display:none;
+#comments-logged-in,
+#profile-logged-in {
+  display: none;
 }
 
 @media only screen and (max-width: 1600px) {
@@ -337,7 +340,7 @@ button:hover {
   }
   #content-container,
   #half-content-container,
-  p,
+  p:not(.no-pad),
   h1,
   h2,
   h3 {
