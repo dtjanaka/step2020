@@ -8,6 +8,7 @@ import com.google.appengine.api.datastore.Query;
 import com.google.appengine.api.datastore.Query.Filter;
 import com.google.appengine.api.datastore.Query.FilterOperator;
 import com.google.appengine.api.datastore.Query.FilterPredicate;
+import com.google.appengine.api.datastore.Query.SortDirection;
 import com.google.appengine.api.users.UserService;
 import com.google.appengine.api.users.UserServiceFactory;
 import com.google.gson.Gson;
@@ -40,9 +41,7 @@ public class ProfilePage extends HttpServlet {
     Filter propertyFilter =
         new FilterPredicate("uid", FilterOperator.EQUAL, uid);
 
-    Query query = new Query("Comment").
-        setFilter(propertyFilter).
-        addSort("iso8601", Query.SortDirection.DESCENDING);
+    Query query = new Query("Comment").setFilter(propertyFilter).addSort("iso8601", SortDirection.DESCENDING);
 
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
     PreparedQuery storedComments = datastore.prepare(query);

@@ -19,6 +19,7 @@ import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.Entity;
 import com.google.appengine.api.datastore.PreparedQuery;
 import com.google.appengine.api.datastore.Query;
+import com.google.appengine.api.datastore.Query.SortDirection;
 import com.google.appengine.api.users.UserService;
 import com.google.appengine.api.users.UserServiceFactory;
 import com.google.gson.Gson;
@@ -87,7 +88,15 @@ public class DataServlet extends HttpServlet {
     String comment = request.getParameter("comment");
     String uid = userService.getCurrentUser().getUserId();
     String token = request.getParameter("g-recaptcha-response");
-    if (!isValidCaptcha("6LdVqqsZAAAAAIWqrc3cHKtjtLZM26gdGOsrT0e8", token) || !userService.isUserLoggedIn()) {
+
+    Query query = new Query("Secret");
+
+    DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+    PreparedQuery secret = datastore.prepare(query);
+
+    String secretKey = (String)secret.asSingleEntity().getProperty("value");
+
+    if (!isValidCaptcha(secretKey, token) || !userService.isUserLoggedIn()) {
       response.sendRedirect("/comments.html");
       return;
     }
@@ -107,7 +116,6 @@ public class DataServlet extends HttpServlet {
     commentEntity.setProperty("time", formatTime);
     commentEntity.setProperty("iso8601", nowString);
 
-    DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
     datastore.put(commentEntity);
 
     response.sendRedirect("/comments.html");
@@ -146,8 +154,8 @@ public class DataServlet extends HttpServlet {
     }
 
     Query query = new Query("Comment").addSort(
-        "iso8601", sortType.equals("asc") ? Query.SortDirection.ASCENDING
-                                          : Query.SortDirection.DESCENDING);
+        "iso8601", sortType.equals("asc") ? SortDirection.ASCENDING
+                                          : SortDirection.DESCENDING);
 
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
     PreparedQuery storedComments = datastore.prepare(query);

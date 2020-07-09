@@ -229,7 +229,7 @@ function createPElement(text) {
  */
 function onloadCallback() {
   grecaptcha.render('recaptcha', {
-    sitekey: '6LdVqqsZAAAAALmVvlgvJIg8fA8dBuu4n_x1Uz6y',
+    sitekey: '6LcBoK8ZAAAAADiONXD5MJKnevKoPu3-tifMOeaM',
   });
 }
 
@@ -321,7 +321,7 @@ function createMap() {
         '<a href="/images/IMG_2744.jpg">' +
         '<img src="/images/IMG_2744.jpg" style="width: 100%" /></a>';
       mapInfoContainer.appendChild(
-        createPElement('A bridge across the Guadalupe River connecting' + 
+        createPElement('A bridge across the Guadalupe River connecting ' + 
         'the lower and upper trails.')
       );
       mapInfoContainer.appendChild(createCloseButtonElement());

@@ -110,12 +110,12 @@ td {
   color: white;
 }
 
-#links button {
+#links button, #links-2 button {
   width: 100%;
   height: 50px;
 }
 
-#links {
+#links, #links-2 {
   text-align: center;
 }
 
@@ -335,12 +335,6 @@ button:hover {
   .responsive {
     width: 75%;
   }
-}
-
-@media only screen and (max-width: 1250px) {
-  #view-comments {
-    float: right;
-  }
   #content-container,
   #half-content-container,
   p,
@@ -349,6 +343,9 @@ button:hover {
   h3 {
     padding-left: 10px;
     padding-right: 10px;
+  }
+  #misc-link {
+    background-color: #16c172;
   }
   [class*="col-"] {
     width: 100%;
