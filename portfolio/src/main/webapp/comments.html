@@ -53,7 +53,7 @@
       <br />
       <form>
         <label for="show">Show:</label>
-        <select type="text" id="num-comments" onchange="updateComments()">
+        <select type="text" id="num-comments" onchange="updateComments(false)">
           <option selected>10</option>
           <option>20</option>
           <option>30</option>
@@ -62,7 +62,7 @@
           <option>All</option>
         </select>
         <label for="sort-by">Sort by:</label>
-        <select type="text" id="sort-type" onchange="updateComments()">
+        <select type="text" id="sort-type" onchange="updateComments(false)">
           <option value="dsc" selected>Date: new to old</option>
           <option value="asc">Date: old to new</option>
         </select>

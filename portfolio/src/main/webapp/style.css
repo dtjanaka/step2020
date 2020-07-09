@@ -324,7 +324,7 @@ button:hover {
   float: left;
 }
 
-#comments-logged-in {
+#comments-logged-in, #profile-logged-in {
   display:none;
 }
 

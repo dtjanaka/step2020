@@ -1,3 +1,5 @@
+#gcloud datastore indexes create ~/step/portfolio/src/main/webapp/WEB-INF/index.yaml
+
 indexes:
 
 - kind: Comment

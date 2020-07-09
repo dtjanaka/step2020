@@ -19,6 +19,9 @@ import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.Entity;
 import com.google.appengine.api.datastore.PreparedQuery;
 import com.google.appengine.api.datastore.Query;
+import com.google.appengine.api.datastore.Query.Filter;
+import com.google.appengine.api.datastore.Query.FilterOperator;
+import com.google.appengine.api.datastore.Query.FilterPredicate;
 import com.google.appengine.api.datastore.Query.SortDirection;
 import com.google.appengine.api.users.UserService;
 import com.google.appengine.api.users.UserServiceFactory;
@@ -127,6 +130,7 @@ public class DataServlet extends HttpServlet {
     response.setContentType("application/json");
 
     UserService userService = UserServiceFactory.getUserService();
+    String uid = userService.getCurrentUser().getUserId();
 
     if (!userService.isUserLoggedIn()) {
       response.sendRedirect("/comments.html");
@@ -135,7 +139,9 @@ public class DataServlet extends HttpServlet {
 
     String numComments = request.getParameter("numComments");
     String sortType = request.getParameter("sortType");
+    String forProfileString = request.getParameter("profile");
     int nComments = 10;
+    boolean forProfile = false;
 
     if (sortType == null) {
         sortType = "dsc";
@@ -153,9 +159,26 @@ public class DataServlet extends HttpServlet {
       }
     }
 
+    if (forProfileString == null) {
+        forProfileString = "false";
+    }
+
+    try {
+        forProfile = Boolean.parseBoolean(forProfileString);
+    } catch (Exception e) {
+        System.out.println("Error parsing argument to boolean");
+    }
+
     Query query = new Query("Comment").addSort(
         "iso8601", sortType.equals("asc") ? SortDirection.ASCENDING
                                           : SortDirection.DESCENDING);
+
+    if (forProfile) {
+        Filter propertyFilter =
+            new FilterPredicate("uid", FilterOperator.EQUAL, uid);
+
+        query.setFilter(propertyFilter);
+    }
 
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
     PreparedQuery storedComments = datastore.prepare(query);

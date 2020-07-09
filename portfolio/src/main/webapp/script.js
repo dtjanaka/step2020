@@ -171,14 +171,15 @@ function resetTicTacToe() {
 /**
  * Fetch content from data servlet and place in container.
  */
-async function updateComments() {
+async function updateComments(profile) {
   let numCom = document.getElementById('num-comments');
   let numComments = numCom.options[numCom.selectedIndex].text;
   let howSort = document.getElementById('sort-type');
   let sortType = howSort.options[howSort.selectedIndex].value;
 
   let url =
-    '/comments?' + 'numComments=' + numComments + '&sortType=' + sortType;
+    '/comments?' + 'numComments=' + numComments + '&sortType=' + sortType + 
+    '&profile=' + profile;
 
   const response = await fetch(url);
   const msg = await response.json();
@@ -413,14 +414,14 @@ function createLoginLogout(type, url) {
  * Runs when the body of comments page loads.
  * Either displays login button or full comments page and logout button.
  */
-async function onloadComments() {
+async function onloadComments(profile) {
   const response = await fetch('/login-status');
   const result = await response.json();
   if (result.loggedIn) {
       document.getElementById('comments-logged-in').style.display = 'initial';
       document.getElementById('login-logout').appendChild(
           createLoginLogout(1, result.url));
-      updateComments();
+      updateComments(profile);
   } else {
       document.getElementById('login-logout').appendChild(
           createLoginLogout(0, result.url));      
