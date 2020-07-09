@@ -45,6 +45,8 @@ import org.json.JSONObject;
 
 @WebServlet("/comments")
 public class DataServlet extends HttpServlet {
+  private static final String ALL_COMMENTS = "All";
+  private static final String ASCENDING_COMMENTS = "asc";
 
   public synchronized boolean isValidCaptcha(String secretKey,
                                              String response) {
@@ -137,23 +139,23 @@ public class DataServlet extends HttpServlet {
       return;
     }
 
-    String numComments = request.getParameter("numComments");
+    String numCommentsString = request.getParameter("numComments");
     String sortType = request.getParameter("sortType");
     String forProfileString = request.getParameter("profile");
-    int nComments = 10;
+    int numComments = 10; // Show 10 comments by default
     boolean forProfile = false;
 
     if (sortType == null) {
       sortType = "dsc";
     }
 
-    if (numComments == null) {
+    if (numCommentsString == null) {
       numComments = "10";
     }
 
-    if (!numComments.equals("All")) {
+    if (!numCommentsString.equals(ALL_COMMENTS)) {
       try {
-        nComments = Integer.parseInt(numComments);
+        numComments = Integer.parseInt(numCommentsString);
       } catch (Exception e) {
         System.out.println("Error parsing argument to integer");
       }
@@ -170,8 +172,8 @@ public class DataServlet extends HttpServlet {
     }
 
     Query query = new Query("Comment").addSort(
-        "iso8601", sortType.equals("asc") ? SortDirection.ASCENDING
-                                          : SortDirection.DESCENDING);
+        "iso8601", sortType.equals(ASCENDING_COMMENTS) ? SortDirection.ASCENDING
+                                                       : SortDirection.DESCENDING);
 
     if (forProfile) {
       Filter propertyFilter =
@@ -193,7 +195,7 @@ public class DataServlet extends HttpServlet {
 
       maxComments++;
       comments.add(new Comment(name, comment, date, time, null));
-      if (!numComments.equals("All") && maxComments >= nComments) {
+      if (!numCommentsString.equals(ALL_COMMENTS) && maxComments >= numComments) {
         break;
       }
     }
