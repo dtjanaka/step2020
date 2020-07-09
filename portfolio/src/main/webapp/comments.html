@@ -11,9 +11,11 @@
     <link rel="stylesheet" href="style.css" />
     <script src="script.js"></script>
   </head>
-  <body onload="updateComments()">
+  <body onload="onloadComments()">
     <div id="content">
       <h1>Comments</h1>
+      <div id="login-logout"></div>
+      <div id="comments-logged-in">
       <form id="comment-form" action="/comments" method="POST">
         <p>Leave a comment below.</p>
         <label for="name">Name:</label>
@@ -38,6 +40,7 @@
         </button>
       </form>
       <br />
+      <a href="/delete-data">
       <button
         id="delete-data"
         class="center misc-button"
@@ -45,6 +48,7 @@
       >
         Delete comments
       </button>
+      </a>
       <br />
       <form>
         <label for="show">Show:</label>
@@ -69,5 +73,6 @@
       async
       defer
     ></script>
+    </div>
   </body>
 </html>

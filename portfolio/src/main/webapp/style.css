@@ -324,6 +324,10 @@ button:hover {
   float: left;
 }
 
+#comments-logged-in {
+  display:none;
+}
+
 @media only screen and (max-width: 1600px) {
   .misc-button {
     width: 100%;

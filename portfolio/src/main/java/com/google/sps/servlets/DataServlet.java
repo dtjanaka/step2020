@@ -19,6 +19,8 @@ import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.Entity;
 import com.google.appengine.api.datastore.PreparedQuery;
 import com.google.appengine.api.datastore.Query;
+import com.google.appengine.api.users.UserService;
+import com.google.appengine.api.users.UserServiceFactory;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import java.io.BufferedReader;
@@ -71,6 +73,7 @@ public class DataServlet extends HttpServlet {
 
       return json.getBoolean("success");
     } catch (Exception e) {
+        System.out.println("Error verifying reCAPTCHA");
     }
     return false;
   }
@@ -78,10 +81,12 @@ public class DataServlet extends HttpServlet {
   @Override
   public void doPost(HttpServletRequest request, HttpServletResponse response)
       throws IOException {
+    UserService userService = UserServiceFactory.getUserService();
+
     String name = request.getParameter("name");
     String comment = request.getParameter("comment");
     String token = request.getParameter("g-recaptcha-response");
-    if (!isValidCaptcha("6LdVqqsZAAAAAIWqrc3cHKtjtLZM26gdGOsrT0e8", token)) {
+    if (!isValidCaptcha("6LdVqqsZAAAAAIWqrc3cHKtjtLZM26gdGOsrT0e8", token) || !userService.isUserLoggedIn()) {
       response.sendRedirect("/comments.html");
       return;
     }
@@ -111,14 +116,30 @@ public class DataServlet extends HttpServlet {
       throws IOException {
     response.setContentType("application/json");
 
+    UserService userService = UserServiceFactory.getUserService();
+
+    if (!userService.isUserLoggedIn()) {
+      response.sendRedirect("/comments.html");
+      return;
+    }
+
     String numComments = request.getParameter("numComments");
     String sortType = request.getParameter("sortType");
     int nComments = 10;
+
+    if (sortType == null) {
+        sortType = "dsc";
+    }
+
+    if (numComments == null) {
+        numComments = "10";
+    }
 
     if (!numComments.equals("All")) {
       try {
         nComments = Integer.parseInt(numComments);
       } catch (Exception e) {
+          System.out.println("Error parsing argument to integer");
       }
     }
 

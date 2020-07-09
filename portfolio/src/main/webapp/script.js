@@ -244,12 +244,6 @@ function verifyRecaptcha() {
   }
 }
 
-async function deleteData() {
-  const request = new Request('/delete-data', { method: 'POST' });
-  const response = await fetch(request);
-  updateComments();
-}
-
 /**
  * Create close button for expanding info box.
  */
@@ -401,5 +395,39 @@ function changeSlide(slideshowNum, direction) {
   } else {
     document.getElementById('show1').src = img;
     document.getElementById('show1-link').href = img;
+  }
+}
+
+/**
+ * Create login or logout button.
+ *
+ * @param type  0 for login, 1 for logout
+ * @param url   link for login/logout    
+ */
+function createLoginLogout(type, url) {
+    let link = document.createElement('a');
+    link.href = url;
+    let buttonElement = document.createElement('button');
+    buttonElement.classList.add('center', 'misc-button');
+    buttonElement.innerText = type ? 'Logout' : 'Login';
+    link.appendChild(buttonElement);
+    return link;    
+}
+
+/**
+ * Runs when the body of comments page loads.
+ * Either displays login button or full comments page and logout button.
+ */
+async function onloadComments() {
+  const response = await fetch('/login-status');
+  const result = await response.json();
+  if (result.loggedIn) {
+      document.getElementById('comments-logged-in').style.display = 'initial';
+      document.getElementById('login-logout').appendChild(
+          createLoginLogout(1, result.url));
+      updateComments();
+  } else {
+      document.getElementById('login-logout').appendChild(
+          createLoginLogout(0, result.url));      
   }
 }
