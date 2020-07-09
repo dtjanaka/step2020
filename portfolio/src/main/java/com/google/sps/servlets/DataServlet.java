@@ -85,6 +85,7 @@ public class DataServlet extends HttpServlet {
 
     String name = request.getParameter("name");
     String comment = request.getParameter("comment");
+    String uid = userService.getCurrentUser().getUserId();
     String token = request.getParameter("g-recaptcha-response");
     if (!isValidCaptcha("6LdVqqsZAAAAAIWqrc3cHKtjtLZM26gdGOsrT0e8", token) || !userService.isUserLoggedIn()) {
       response.sendRedirect("/comments.html");
@@ -101,6 +102,7 @@ public class DataServlet extends HttpServlet {
     Entity commentEntity = new Entity("Comment");
     commentEntity.setProperty("name", name);
     commentEntity.setProperty("comment", comment);
+    commentEntity.setProperty("uid", uid);
     commentEntity.setProperty("date", formatDate);
     commentEntity.setProperty("time", formatTime);
     commentEntity.setProperty("iso8601", nowString);
@@ -159,7 +161,7 @@ public class DataServlet extends HttpServlet {
       String time = (String)entity.getProperty("time");
 
       maxComments++;
-      comments.add(new Comment(name, comment, date, time));
+      comments.add(new Comment(name, comment, date, time, null)); 
       if (!numComments.equals("All") && maxComments >= nComments) {
         break;
       }

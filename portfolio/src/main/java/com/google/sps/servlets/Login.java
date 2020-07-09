@@ -15,18 +15,18 @@ public class Login extends HttpServlet {
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response)
       throws IOException {
-    response.setContentType("text/html");
+    response.setContentType("application/json");
 
     UserService userService = UserServiceFactory.getUserService();
     if (userService.isUserLoggedIn()) {
         String logoutUrl = userService.createLogoutURL("/comments.html");
         Gson gson = new GsonBuilder().setPrettyPrinting().create();
-        String userInfo = gson.toJson(new UserInfo(true, logoutUrl, userService.getCurrentUser().getEmail()));
+        String userInfo = gson.toJson(new UserInfo(true, logoutUrl));
         response.getWriter().println(userInfo);
     } else {
         String loginUrl = userService.createLoginURL("/comments.html");
         Gson gson = new GsonBuilder().setPrettyPrinting().create();
-        String userInfo = gson.toJson(new UserInfo(false, loginUrl, null));
+        String userInfo = gson.toJson(new UserInfo(false, loginUrl));
         response.getWriter().println(userInfo);
     }
   }
