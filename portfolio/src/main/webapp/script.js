@@ -272,7 +272,7 @@ let trailInfoDisplayed = false;
 function createMap() {
   const map = new google.maps.Map(document.getElementById('map'), {
     //center: {lat: 37.412177, lng: -121.959926},
-    center: { lat: 37.389155, lng: -121.945 },
+    center: { lat: 37.39, lng: -121.945 },
     zoom: 13,
   });
   const GRTStartMarker = new google.maps.Marker({
@@ -295,7 +295,9 @@ function createMap() {
 
   GRTStartMarker.addListener('click', function () {
     if (!trailInfoDisplayed) {
-      document.getElementById('map').style.width = '50%';
+      if (window.innerWidth >= 1600) {
+        document.getElementById('map').style.width = '50%';
+      }
       const mapInfoContainer = document.getElementById(
         'half-content-container'
       );
@@ -319,7 +321,9 @@ function createMap() {
 
   GRTBridgeMarker.addListener('click', function () {
     if (!trailInfoDisplayed) {
-      document.getElementById('map').style.width = '50%';
+      if (window.innerWidth >= 1600) {
+        document.getElementById('map').style.width = '50%';
+      }
       const mapInfoContainer = document.getElementById(
         'half-content-container'
       );
@@ -339,7 +343,9 @@ function createMap() {
 
   GRTAirportMarker.addListener('click', function () {
     if (!trailInfoDisplayed) {
-      document.getElementById('map').style.width = '50%';
+      if (window.innerWidth >= 1600) {
+        document.getElementById('map').style.width = '50%';
+      }
       const mapInfoContainer = document.getElementById(
         'half-content-container'
       );
@@ -436,3 +442,13 @@ async function onloadComments(profile) {
       .appendChild(createLoginLogout(0, result.url));
   }
 }
+
+window.addEventListener('resize', function () {
+  if (window.innerWidth < 1600) {
+    document.getElementById('map').style.width = '100%';
+  } else if (
+    document.getElementById('half-content-container').innerHTML !== ''
+  ) {
+    document.getElementById('map').style.width = '50%';
+  }
+});
