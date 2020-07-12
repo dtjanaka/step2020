@@ -150,7 +150,7 @@ public class DataServlet extends HttpServlet {
     }
 
     if (numCommentsString == null) {
-      numComments = "10";
+      numCommentsString = "10";
     }
 
     if (!numCommentsString.equals(ALL_COMMENTS)) {
