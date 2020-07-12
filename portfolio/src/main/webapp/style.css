@@ -21,7 +21,13 @@ button:disabled {
 
 h1 {
   font-size: 50px;
+  margin-top: 20px;
   margin-bottom: 20px;
+}
+
+h2 {
+  margin-top: 16px;
+  margin-bottom: 16px;
 }
 
 h3 {
@@ -110,12 +116,14 @@ td {
   color: white;
 }
 
-#links button {
+#links button,
+#links-2 button {
   width: 100%;
   height: 50px;
 }
 
-#links {
+#links,
+#links-2 {
   text-align: center;
 }
 
@@ -274,7 +282,7 @@ button:hover {
 }
 
 #map {
-  height: 750px;
+  height: 650px;
   width: 100%;
   float: left;
 }
@@ -306,6 +314,10 @@ button:hover {
   text-align: justify;
 }
 
+#half-content-container img {
+  display: block;
+}
+
 #half-content-container button {
   width: 100%;
 }
@@ -324,27 +336,35 @@ button:hover {
   float: left;
 }
 
+#comments-logged-in,
+#profile-logged-in {
+  display: none;
+}
+
 @media only screen and (max-width: 1600px) {
+  #map,
+  #half-content-container {
+    width: 100%;
+  }
+
+  #half-content-container {
+    padding-left: 0px;
+    margin-top: 20px;
+  }
   .misc-button {
     width: 100%;
   }
   .responsive {
     width: 75%;
   }
-}
-
-@media only screen and (max-width: 1250px) {
-  #view-comments {
-    float: right;
-  }
-  #content-container,
-  #half-content-container,
-  p,
-  h1,
+  p:not(.no-pad),
   h2,
   h3 {
-    padding-left: 10px;
-    padding-right: 10px;
+    padding-left: 5px;
+    padding-right: 5px;
+  }
+  #misc-link {
+    background-color: #16c172;
   }
   [class*="col-"] {
     width: 100%;

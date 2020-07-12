@@ -19,6 +19,12 @@ import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.Entity;
 import com.google.appengine.api.datastore.PreparedQuery;
 import com.google.appengine.api.datastore.Query;
+import com.google.appengine.api.datastore.Query.Filter;
+import com.google.appengine.api.datastore.Query.FilterOperator;
+import com.google.appengine.api.datastore.Query.FilterPredicate;
+import com.google.appengine.api.datastore.Query.SortDirection;
+import com.google.appengine.api.users.UserService;
+import com.google.appengine.api.users.UserServiceFactory;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import java.io.BufferedReader;
@@ -73,6 +79,7 @@ public class DataServlet extends HttpServlet {
 
       return json.getBoolean("success");
     } catch (Exception e) {
+      System.out.println("Error verifying reCAPTCHA");
     }
     return false;
   }
@@ -80,10 +87,21 @@ public class DataServlet extends HttpServlet {
   @Override
   public void doPost(HttpServletRequest request, HttpServletResponse response)
       throws IOException {
+    UserService userService = UserServiceFactory.getUserService();
+
     String name = request.getParameter("name");
     String comment = request.getParameter("comment");
+    String uid = userService.getCurrentUser().getUserId();
     String token = request.getParameter("g-recaptcha-response");
-    if (!isValidCaptcha("6LdVqqsZAAAAAIWqrc3cHKtjtLZM26gdGOsrT0e8", token)) {
+
+    Query query = new Query("Secret");
+
+    DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+    PreparedQuery secret = datastore.prepare(query);
+
+    String secretKey = (String)secret.asSingleEntity().getProperty("value");
+
+    if (!isValidCaptcha(secretKey, token) || !userService.isUserLoggedIn()) {
       response.sendRedirect("/comments.html");
       return;
     }
@@ -98,11 +116,11 @@ public class DataServlet extends HttpServlet {
     Entity commentEntity = new Entity("Comment");
     commentEntity.setProperty("name", name);
     commentEntity.setProperty("comment", comment);
+    commentEntity.setProperty("uid", uid);
     commentEntity.setProperty("date", formatDate);
     commentEntity.setProperty("time", formatTime);
     commentEntity.setProperty("iso8601", nowString);
 
-    DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
     datastore.put(commentEntity);
 
     response.sendRedirect("/comments.html");
@@ -113,20 +131,56 @@ public class DataServlet extends HttpServlet {
       throws IOException {
     response.setContentType("application/json");
 
+    UserService userService = UserServiceFactory.getUserService();
+    String uid = userService.getCurrentUser().getUserId();
+
+    if (!userService.isUserLoggedIn()) {
+      response.sendRedirect("/comments.html");
+      return;
+    }
+
     String numCommentsString = request.getParameter("numComments");
     String sortType = request.getParameter("sortType");
+    String forProfileString = request.getParameter("profile");
     int numComments = 10; // Show 10 comments by default
+    boolean forProfile = false;
+
+    if (sortType == null) {
+      sortType = "dsc";
+    }
+
+    if (numCommentsString == null) {
+      numComments = "10";
+    }
 
     if (!numCommentsString.equals(ALL_COMMENTS)) {
       try {
         numComments = Integer.parseInt(numCommentsString);
       } catch (Exception e) {
+        System.out.println("Error parsing argument to integer");
       }
     }
 
+    if (forProfileString == null) {
+      forProfileString = "false";
+    }
+
+    try {
+      forProfile = Boolean.parseBoolean(forProfileString);
+    } catch (Exception e) {
+      System.out.println("Error parsing argument to boolean");
+    }
+
     Query query = new Query("Comment").addSort(
-        "iso8601", sortType.equals(ASCENDING_COMMENTS) ? Query.SortDirection.ASCENDING
-                                                       : Query.SortDirection.DESCENDING);
+        "iso8601", sortType.equals(ASCENDING_COMMENTS) ? SortDirection.ASCENDING
+                                                       : SortDirection.DESCENDING);
+
+    if (forProfile) {
+      Filter propertyFilter =
+          new FilterPredicate("uid", FilterOperator.EQUAL, uid);
+
+      query.setFilter(propertyFilter);
+    }
 
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
     PreparedQuery storedComments = datastore.prepare(query);
@@ -140,7 +194,7 @@ public class DataServlet extends HttpServlet {
       String time = (String)entity.getProperty("time");
 
       maxComments++;
-      comments.add(new Comment(name, comment, date, time));
+      comments.add(new Comment(name, comment, date, time, null));
       if (!numCommentsString.equals(ALL_COMMENTS) && maxComments >= numComments) {
         break;
       }

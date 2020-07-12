@@ -171,15 +171,20 @@ function resetTicTacToe() {
 /**
  * Fetch content from data servlet and place in container.
  */
-
-async function updateComments() {
+async function updateComments(profile) {
   let numCom = document.getElementById('num-comments');
   let numComments = numCom.options[numCom.selectedIndex].text;
   let howSort = document.getElementById('sort-type');
   let sortType = howSort.options[howSort.selectedIndex].value;
 
   let url =
-    '/comments?' + 'numComments=' + numComments + '&sortType=' + sortType;
+    '/comments?' +
+    'numComments=' +
+    numComments +
+    '&sortType=' +
+    sortType +
+    '&profile=' +
+    profile;
 
   const response = await fetch(url);
   const msg = await response.json();
@@ -230,7 +235,7 @@ function createPElement(text) {
  */
 function onloadCallback() {
   grecaptcha.render('recaptcha', {
-    sitekey: '6LdVqqsZAAAAALmVvlgvJIg8fA8dBuu4n_x1Uz6y',
+    sitekey: '6LcBoK8ZAAAAADiONXD5MJKnevKoPu3-tifMOeaM',
   });
 }
 
@@ -243,12 +248,6 @@ function verifyRecaptcha() {
   } else {
     alert('Please verify you are human!');
   }
-}
-
-async function deleteData() {
-  const request = new Request('/delete-data', { method: 'POST' });
-  const response = await fetch(request);
-  updateComments();
 }
 
 /**
@@ -264,6 +263,7 @@ function createCloseButtonElement() {
   return buttonElement;
 }
 
+// Keep track of expanded marker info
 let trailInfoDisplayed = false;
 
 /**
@@ -272,7 +272,7 @@ let trailInfoDisplayed = false;
 function createMap() {
   const map = new google.maps.Map(document.getElementById('map'), {
     //center: {lat: 37.412177, lng: -121.959926},
-    center: { lat: 37.389155, lng: -121.945 },
+    center: { lat: 37.39, lng: -121.945 },
     zoom: 13,
   });
   const GRTStartMarker = new google.maps.Marker({
@@ -295,31 +295,9 @@ function createMap() {
 
   GRTStartMarker.addListener('click', function () {
     if (!trailInfoDisplayed) {
-      document.getElementById('map').style.width = '50%';
-      const mapInfoContainer = document.getElementById(
-        'half-content-container'
-      );
-      mapInfoContainer.innerHTML =
-        '<a href="/images/IMG_2686.jpg">' + 
-        '<img src="/images/IMG_2686.jpg" style="width: 100%" /></a>';
-      mapInfoContainer.appendChild(
-        createPElement('Me at the start of the trail! I ride here frequently.')
-      );
-      mapInfoContainer.appendChild(
-        createPElement(
-          'The bike is a white Poseidon Expressway-SXL, a flat bar ' +
-          'road bike with fixed gears (46T/16T gear ratio), ' +
-          'a 6061 aluminum frame, and 700x25mm tires.'
-        )
-      );
-      mapInfoContainer.appendChild(createCloseButtonElement());
-      trailInfoDisplayed = true;
-    }
-  });
-
-  GRTBridgeMarker.addListener('click', function () {
-    if (!trailInfoDisplayed) {
-      document.getElementById('map').style.width = '50%';
+      if (window.innerWidth >= 1600) {
+        document.getElementById('map').style.width = '50%';
+      }
       const mapInfoContainer = document.getElementById(
         'half-content-container'
       );
@@ -332,8 +310,30 @@ function createMap() {
       mapInfoContainer.appendChild(
         createPElement(
           'The bike is a white Poseidon Expressway-SXL, a flat bar ' +
-          'road bike with fixed gears (46T/16T gear ratio), ' +
-          'a 6061 aluminum frame, and 700x25mm tires.'
+            'road bike with fixed gears (46T/16T gear ratio), ' +
+            'a 6061 aluminum frame, and 700x25mm tires.'
+        )
+      );
+      mapInfoContainer.appendChild(createCloseButtonElement());
+      trailInfoDisplayed = true;
+    }
+  });
+
+  GRTBridgeMarker.addListener('click', function () {
+    if (!trailInfoDisplayed) {
+      if (window.innerWidth >= 1600) {
+        document.getElementById('map').style.width = '50%';
+      }
+      const mapInfoContainer = document.getElementById(
+        'half-content-container'
+      );
+      mapInfoContainer.innerHTML =
+        '<a href="/images/IMG_2744.jpg">' +
+        '<img src="/images/IMG_2744.jpg" style="width: 100%" /></a>';
+      mapInfoContainer.appendChild(
+        createPElement(
+          'A bridge across the Guadalupe River connecting ' +
+            'the lower and upper trails.'
         )
       );
       mapInfoContainer.appendChild(createCloseButtonElement());
@@ -343,12 +343,14 @@ function createMap() {
 
   GRTAirportMarker.addListener('click', function () {
     if (!trailInfoDisplayed) {
-      document.getElementById('map').style.width = '50%';
+      if (window.innerWidth >= 1600) {
+        document.getElementById('map').style.width = '50%';
+      }
       const mapInfoContainer = document.getElementById(
         'half-content-container'
       );
       mapInfoContainer.innerHTML =
-        '<a href="/images/IMG_2686.jpg">' + 
+        '<a href="/images/IMG_2686.jpg">' +
         '<img src="/images/IMG_2686.jpg" style="width: 100%" /></a>';
       mapInfoContainer.appendChild(
         createPElement('Me at the start of the trail! I ride here frequently.')
@@ -356,8 +358,8 @@ function createMap() {
       mapInfoContainer.appendChild(
         createPElement(
           'The bike is a white Poseidon Expressway-SXL, a flat bar ' +
-          'road bike with fixed gears (46T/16T gear ratio), ' +
-          'a 6061 aluminum frame, and 700x25mm tires.'
+            'road bike with fixed gears (46T/16T gear ratio), ' +
+            'a 6061 aluminum frame, and 700x25mm tires.'
         )
       );
       mapInfoContainer.appendChild(createCloseButtonElement());
@@ -404,3 +406,49 @@ function changeSlide(slideshowNum, direction) {
     document.getElementById('show1-link').href = img;
   }
 }
+
+/**
+ * Create login or logout button.
+ *
+ * @param type  0 for login, 1 for logout
+ * @param url   link for login/logout
+ */
+function createLoginLogout(type, url) {
+  let link = document.createElement('a');
+  link.href = url;
+  let buttonElement = document.createElement('button');
+  buttonElement.classList.add('center', 'misc-button');
+  buttonElement.innerText = type ? 'Logout' : 'Login';
+  link.appendChild(buttonElement);
+  return link;
+}
+
+/**
+ * Runs when the body of comments page loads.
+ * Either displays login button or full comments page and logout button.
+ */
+async function onloadComments(profile) {
+  const response = await fetch('/login-status');
+  const result = await response.json();
+  if (result.loggedIn) {
+    document.getElementById('comments-logged-in').style.display = 'initial';
+    document
+      .getElementById('login-logout')
+      .appendChild(createLoginLogout(1, result.url));
+    updateComments(profile);
+  } else {
+    document
+      .getElementById('login-logout')
+      .appendChild(createLoginLogout(0, result.url));
+  }
+}
+
+window.addEventListener('resize', function () {
+  if (window.innerWidth < 1600) {
+    document.getElementById('map').style.width = '100%';
+  } else if (
+    document.getElementById('half-content-container').innerHTML !== ''
+  ) {
+    document.getElementById('map').style.width = '50%';
+  }
+});

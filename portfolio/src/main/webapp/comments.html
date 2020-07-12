@@ -4,6 +4,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta charset="UTF-8" />
     <title>Comments</title>
+    <link rel="icon" href="/images/IMG_1502_circular.ico" type="image/x-icon" />
     <link
       href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap"
       rel="stylesheet"
@@ -11,63 +12,78 @@
     <link rel="stylesheet" href="style.css" />
     <script src="script.js"></script>
   </head>
-  <body onload="updateComments()">
+  <body onload="onloadComments()">
     <div id="content">
       <h1>Comments</h1>
-      <form id="comment-form" action="/comments" method="POST">
-        <p>Leave a comment below.</p>
-        <label for="name">Name:</label>
+      <div id="login-logout"></div>
+      <div id="comments-logged-in">
         <br />
-        <input type="text" name="name" />
+        <a href="profile.html"
+          ><button id="goto-profile" class="center misc-button">
+            My profile
+          </button>
+        </a>
+        <p class="no-pad">Leave a comment below.</p>
+        <form id="comment-form" action="/comments" method="POST">
+          <label for="name">Name:</label>
+          <br />
+          <input type="text" name="name" />
+          <br />
+          <label for="comment">Comment:</label>
+          <br />
+          <textarea name="comment" id="comment-box"></textarea>
+          <br />
+          <div style="text-align: center; height: 78px;">
+            <div id="recaptcha" style="display: inline-block;"></div>
+          </div>
+          <br />
+          <button
+            type="button"
+            id="submit-comment"
+            class="center misc-button"
+            onclick="verifyRecaptcha()"
+          >
+            Submit
+          </button>
+        </form>
         <br />
-        <label for="comment">Comment:</label>
+        <a href="/delete-data">
+          <button
+            id="delete-data"
+            class="center misc-button"
+            onclick="deleteData()"
+          >
+            Delete comments
+          </button>
+        </a>
         <br />
-        <textarea name="comment" id="comment-box"></textarea>
-        <br />
-        <div style="text-align: center; height: 78px;">
-          <div id="recaptcha" style="display: inline-block;"></div>
-        </div>
-        <br />
-        <button
-          type="button"
-          id="submit-comment"
-          class="center misc-button"
-          onclick="verifyRecaptcha()"
-        >
-          Submit
-        </button>
-      </form>
-      <br />
-      <button
-        id="delete-data"
-        class="center misc-button"
-        onclick="deleteData()"
-      >
-        Delete comments
-      </button>
-      <br />
-      <form>
-        <label for="show">Show:</label>
-        <select type="text" id="num-comments" onchange="updateComments()">
-          <option selected>10</option>
-          <option>20</option>
-          <option>30</option>
-          <option>40</option>
-          <option>50</option>
-          <option>All</option>
-        </select>
-        <label for="sort-by">Sort by:</label>
-        <select type="text" id="sort-type" onchange="updateComments()">
-          <option value="dsc" selected>Date: new to old</option>
-          <option value="asc">Date: old to new</option>
-        </select>
-      </form>
-      <div id="content-container"></div>
+        <form>
+          <label for="show">Show:</label>
+          <select
+            type="text"
+            id="num-comments"
+            onchange="updateComments(false)"
+          >
+            <option selected>10</option>
+            <option>20</option>
+            <option>30</option>
+            <option>40</option>
+            <option>50</option>
+            <option>All</option>
+          </select>
+          <label for="sort-by">Sort by:</label>
+          <select type="text" id="sort-type" onchange="updateComments(false)">
+            <option value="dsc" selected>Date: new to old</option>
+            <option value="asc">Date: old to new</option>
+          </select>
+        </form>
+        <div id="content-container"></div>
+      </div>
+      <script
+        src="https://www.google.com/recaptcha/api.js?onload=onloadCallback&render=explicit"
+        async
+        defer
+      ></script>
     </div>
-    <script
-      src="https://www.google.com/recaptcha/api.js?onload=onloadCallback&render=explicit"
-      async
-      defer
-    ></script>
   </body>
 </html>
