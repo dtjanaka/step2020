@@ -205,7 +205,7 @@ public class DataServlet extends HttpServlet {
             Translation translation =
                 translate.translate(comment, Translate.TranslateOption.targetLanguage(newLang));
             comment = translation.getTranslatedText();
-        } catch(Exception e) {
+        } catch (Exception e) {
             System.out.println("Error translating to" + newLang);
         }
       }

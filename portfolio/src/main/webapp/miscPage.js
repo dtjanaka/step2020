@@ -20,25 +20,25 @@ function createMap() {
     center: { lat: 37.39, lng: -121.945 },
     zoom: 13,
   });
-  const GRTStartMarker = new google.maps.Marker({
+  const grtStartMarker = new google.maps.Marker({
     position: { lat: 37.423404, lng: -121.975947 },
     map: map,
     title: 'Guadalupe River Trail start',
   });
 
-  const GRTBridgeMarker = new google.maps.Marker({
+  const grtBridgeMarker = new google.maps.Marker({
     position: { lat: 37.40097, lng: -121.94195 },
     map: map,
     title: 'Guadalupe River Trail bridge',
   });
 
-  const GRTAirportMarker = new google.maps.Marker({
+  const grtAirportMarker = new google.maps.Marker({
     position: { lat: 37.3545, lng: -121.91279 },
     map: map,
     title: 'Guadalupe River Trail airport terminus',
   });
 
-  GRTStartMarker.addListener('click', function () {
+  grtStartMarker.addListener('click', function () {
     closeInfo();
     if (window.innerWidth >= 1600) {
       document.getElementById('map').style.width = '50%';
@@ -60,7 +60,7 @@ function createMap() {
     mapInfoContainer.appendChild(createCloseButtonElement());
   });
 
-  GRTBridgeMarker.addListener('click', function () {
+  grtBridgeMarker.addListener('click', function () {
     closeInfo();
     if (window.innerWidth >= 1600) {
       document.getElementById('map').style.width = '50%';
@@ -78,7 +78,7 @@ function createMap() {
     mapInfoContainer.appendChild(createCloseButtonElement());
   });
 
-  GRTAirportMarker.addListener('click', function () {
+  grtAirportMarker.addListener('click', function () {
     closeInfo();
     if (window.innerWidth >= 1600) {
       document.getElementById('map').style.width = '50%';
@@ -96,15 +96,15 @@ function createMap() {
     mapInfoContainer.appendChild(createCloseButtonElement());
   });
 
-  const GRTPath = new google.maps.Polyline({
-    path: GRTCoordinates,
+  const grtPath = new google.maps.Polyline({
+    path: grtCoordinates,
     geodesic: true,
     strokeColor: '#FF0000',
     strokeOpacity: 1.0,
     strokeWeight: 2,
   });
 
-  GRTPath.setMap(map);
+  grtPath.setMap(map);
 }
 
 function closeInfo() {
@@ -123,8 +123,13 @@ function changeSlide(slideshowNum, direction) {
     ['IMG_8732.jpg', 'IMG_8795.jpg', 'IMG_8819.jpg'],
     ['IMG_2715.jpg', 'IMG_2718.jpg', 'IMG_2722.jpg'],
   ];
-  curShowIdxs[slideshowNum] =
-    (((curShowIdxs[slideshowNum] + direction) % 3) + 3) % 3;
+
+  curShowIdxs[slideshowNum] = (curShowIdxs[slideshowNum] + direction) % 3;
+  // Handle negative numbers: -1 % 3 = -1, want to wrap around to 2
+  if (curShowIdxs[slideshowNum] < 0) {
+      curShowIdxs[slideshowNum] += 3;
+  }
+
   const img = '/images/' + show[slideshowNum][curShowIdxs[slideshowNum]];
   if (!slideshowNum) {
     document.getElementById('show0').src = img;
