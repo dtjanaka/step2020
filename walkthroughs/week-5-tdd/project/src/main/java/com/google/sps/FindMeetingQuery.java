@@ -24,88 +24,104 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-
 public final class FindMeetingQuery {
 
-    private ArrayList<TimeRange> resolveOverlaps(ArrayList<TimeRange> existingConflicts, TimeRange curEvent) {
-        for (int curTime = 0; curTime < existingConflicts.size(); curTime++) {
-            if (curEvent.overlaps(existingConflicts.get(curTime))) {
-                combineTimeRanges(curEvent, existingConflicts.get(curTime));
-            }
+  private ArrayList<TimeRange>
+  resolveOverlaps(ArrayList<TimeRange> existingConflicts, TimeRange curEvent) {
+    Collections.sort(existingConflicts, TimeRange.ORDER_BY_START);
+
+    for (int curTime = 0; curTime < existingConflicts.size(); curTime++) {
+      if (curEvent.overlaps(existingConflicts.get(curTime))) {
+        int firstOverlap = curTime;
+        while (curTime < existingConflicts.size() && curEvent.overlaps(existingConflicts.get(curTime))) {
+            curTime++;
         }
+        curTime--;
+        existingConflicts.set(
+            curTime,
+            combineTimeRanges(curEvent, existingConflicts.get(curTime)));
+        existingConflicts.subList(firstOverlap, curTime).clear();
         return existingConflicts;
+      }
     }
+    existingConflicts.add(curEvent);
+    return existingConflicts;
+  }
 
-    private TimeRange combineTimeRanges(TimeRange t1, TimeRange t2) {
-        int newStart = t1.start() < t2.start() ? t1.start() : t2.start();
-        int newEnd = t1.end() > t2.end() ? t1.end() : t2.end();
-        int newDuration = newEnd - newStart;
-        return TimeRange.fromStartDuration(newStart, newDuration);
+  private TimeRange combineTimeRanges(TimeRange t1, TimeRange t2) {
+    int newStart = t1.start() < t2.start() ? t1.start() : t2.start();
+    int newEnd = t1.end() > t2.end() ? t1.end() : t2.end();
+    int newDuration = newEnd - newStart;
+    return TimeRange.fromStartDuration(newStart, newDuration);
+  }
+
+  private ArrayList<TimeRange> invertTimeRange(ArrayList<TimeRange> t) {
+    if (t.size() < 1) {
+      t.add(TimeRange.WHOLE_DAY);
+      return t;
     }
-
-    private ArrayList<TimeRange> invertTimeRange(ArrayList<TimeRange> t) {
-        if (t.size() < 1) {
-            return t;
-        } 
-        ArrayList<TimeRange> inverted = new ArrayList<TimeRange>();
-        int i = 0;
-        if (t.get(i).start() != 0) {
-            inverted.add(TimeRange.fromStartDuration(0, t.get(i).start()));
-        }
-        for (i = 1; i < t.size(); i++) {
-            inverted.add(TimeRange.fromStartDuration(t.get(i - 1).end(), t.get(i).start() - t.get(i - 1).end()));
-        }
-        if (t.get(i - 1).end() != 2359) {
-            inverted.add(TimeRange.fromStartDuration(t.get(i - 1).end(), 24 - t.get(i - 1).end()));
-        }
-        return inverted;
+    ArrayList<TimeRange> inverted = new ArrayList<TimeRange>();
+    int i = 0;
+    if (t.get(i).start() != TimeRange.START_OF_DAY) {
+      inverted.add(TimeRange.fromStartDuration(0, t.get(i).start()));
     }
+    for (i = 1; i < t.size(); i++) {
+      inverted.add(TimeRange.fromStartDuration(
+          t.get(i - 1).end(), t.get(i).start() - t.get(i - 1).end()));
+    }
+    if (t.get(i - 1).end() != TimeRange.END_OF_DAY) {
+      inverted.add(TimeRange.fromStartDuration(t.get(i - 1).end(),
+                                               1440 - t.get(i - 1).end()));
+    }
+    return inverted;
+  }
 
-  public Collection<TimeRange> query(Collection<Event> events, MeetingRequest request) {
-      if (request.getDuration() > TimeRange.WHOLE_DAY.duration()) {
-          return Arrays.asList();
-      }
-
-      // Get collection of people from MeetingRequest      
-      Collection<String> attendees = request.getAttendees();
-
-      if (attendees.isEmpty()) {
-          return Arrays.asList(TimeRange.WHOLE_DAY);
-      }
-
-      // Parse events into individual calendars
-      Map<String, ArrayList<TimeRange>> unavailable = new HashMap<String, ArrayList<TimeRange>>();
-      for (String curPerson : attendees) {
-          unavailable.put(curPerson, new ArrayList<TimeRange>());
-      }
-
-      for (Event curEvent : events) {
-        Set<String> eventAttendees = curEvent.getAttendees();
-        for (String curPerson : eventAttendees) {
-            if (unavailable.containsKey(curPerson)) {
-                ArrayList<TimeRange> existingConflicts = unavailable.get(curPerson);
-                unavailable.replace(curPerson, resolveOverlaps(existingConflicts, curEvent.getWhen()));
-            }
-        } 
-      }
-
-      // Combine calendars, checking for overlap and accounting for meeting duration
-      ArrayList<TimeRange> combinedUnavailability = new ArrayList<TimeRange>();
-      for (ArrayList<TimeRange> curCalendar : unavailable.values()) {
-          for (TimeRange tr : curCalendar) {
-            resolveOverlaps(combinedUnavailability, tr);
+  private Boolean hasPersonOverlap(Collection<String> a, Collection<String> b) {
+      for (String person : a) {
+          if (b.contains(person)) {
+            return true;
           }
       }
-      
-      ArrayList<TimeRange> combinedAvailability = invertTimeRange(combinedUnavailability);
-      Iterator<TimeRange> itr = combinedAvailability.iterator();
-      while (itr.hasNext()) { 
-          TimeRange tr = itr.next();
-          if (tr.duration() < request.getDuration()) {
-            itr.remove();
-          }
+      return false;
+  }
+
+  public Collection<TimeRange> query(Collection<Event> events,
+                                     MeetingRequest request) {
+    // For a meeting longer than a day, no times are possible
+    if (request.getDuration() > TimeRange.WHOLE_DAY.duration()) {
+      return Arrays.asList();
+    }
+
+    // Get collection of people from MeetingRequest
+    Collection<String> attendees = request.getAttendees();
+
+    // With no attendees, the meeting can be held at any time
+    if (attendees.isEmpty()) {
+      return Arrays.asList(TimeRange.WHOLE_DAY);
+    }
+
+    ArrayList<TimeRange> combinedUnavailability = new ArrayList<TimeRange>();
+
+    for (Event curEvent : events) {
+      Set<String> eventAttendees = curEvent.getAttendees();
+      if (hasPersonOverlap(attendees, eventAttendees)) {
+        combinedUnavailability = resolveOverlaps(combinedUnavailability, curEvent.getWhen());          
       }
-      
-      return combinedAvailability;
+    }  
+
+    // Extract available times by inverting unavailable array
+    ArrayList<TimeRange> combinedAvailability =
+        invertTimeRange(combinedUnavailability);
+
+    // Remove slots which are too short for the meeting
+    Iterator<TimeRange> itr = combinedAvailability.iterator();
+    while (itr.hasNext()) {
+      TimeRange tr = itr.next();
+      if (tr.duration() < request.getDuration()) {
+        itr.remove();
+      }
+    }
+
+    return combinedAvailability;
   }
 }
