@@ -26,28 +26,43 @@ import java.util.Set;
 
 public final class FindMeetingQuery {
 
-  private ArrayList<TimeRange>
-  resolveOverlaps(ArrayList<TimeRange> existingConflicts, TimeRange curEvent) {
-    Collections.sort(existingConflicts, TimeRange.ORDER_BY_START);
-
+  /**
+   * Add new TimeRange to ArrayList by either appending it or combining it with
+   * existing TimeRange(s)
+   */
+  private ArrayList<TimeRange> resolveOverlaps(ArrayList<TimeRange> existingConflicts, TimeRange curEvent) {
+    // Check for overlaps between new event and existing unavailabilities
     for (int curTime = 0; curTime < existingConflicts.size(); curTime++) {
+      // Since array is sorted chronologically, multiple overlaps will be sequential
       if (curEvent.overlaps(existingConflicts.get(curTime))) {
         int firstOverlap = curTime;
-        while (curTime < existingConflicts.size() && curEvent.overlaps(existingConflicts.get(curTime))) {
-            curTime++;
+        while (curTime < existingConflicts.size() &&
+               curEvent.overlaps(existingConflicts.get(curTime))) {
+          curTime++;
         }
         curTime--;
+        
+        // Insert new combined TimeRange in last overlapped position
         existingConflicts.set(
             curTime,
             combineTimeRanges(curEvent, existingConflicts.get(curTime)));
+        // Delete other overlapped entries
         existingConflicts.subList(firstOverlap, curTime).clear();
+        
         return existingConflicts;
       }
     }
+    // No elements in array or no overlaps
     existingConflicts.add(curEvent);
+    // Sort existing unavailabilities by chronological order of start time
+    Collections.sort(existingConflicts, TimeRange.ORDER_BY_START); 
+    
     return existingConflicts;
   }
 
+  /**
+   * Return a single TimeRange spanning both input TimeRanges
+   */
   private TimeRange combineTimeRanges(TimeRange t1, TimeRange t2) {
     int newStart = t1.start() < t2.start() ? t1.start() : t2.start();
     int newEnd = t1.end() > t2.end() ? t1.end() : t2.end();
@@ -55,6 +70,9 @@ public final class FindMeetingQuery {
     return TimeRange.fromStartDuration(newStart, newDuration);
   }
 
+  /**
+   * Return the opposite of input TimeRange ArrayList
+   */
   private ArrayList<TimeRange> invertTimeRange(ArrayList<TimeRange> t) {
     if (t.size() < 1) {
       t.add(TimeRange.WHOLE_DAY);
@@ -76,15 +94,22 @@ public final class FindMeetingQuery {
     return inverted;
   }
 
+  /**
+   * Returns whether any person is present in both input Collections
+   */
   private Boolean hasPersonOverlap(Collection<String> a, Collection<String> b) {
-      for (String person : a) {
-          if (b.contains(person)) {
-            return true;
-          }
+    for (String person : a) {
+      if (b.contains(person)) {
+        return true;
       }
-      return false;
+    }
+    return false;
   }
 
+  /**
+   * Return the TimeRanges available for all meeting members given existing
+   * events
+   */
   public Collection<TimeRange> query(Collection<Event> events,
                                      MeetingRequest request) {
     // For a meeting longer than a day, no times are possible
@@ -102,12 +127,15 @@ public final class FindMeetingQuery {
 
     ArrayList<TimeRange> combinedUnavailability = new ArrayList<TimeRange>();
 
+    // Combine all events into one array of unsuitable TimeRanges
     for (Event curEvent : events) {
       Set<String> eventAttendees = curEvent.getAttendees();
+      // Only account for people attending meeting
       if (hasPersonOverlap(attendees, eventAttendees)) {
-        combinedUnavailability = resolveOverlaps(combinedUnavailability, curEvent.getWhen());          
+        combinedUnavailability =
+            resolveOverlaps(combinedUnavailability, curEvent.getWhen());
       }
-    }  
+    }
 
     // Extract available times by inverting unavailable array
     ArrayList<TimeRange> combinedAvailability =
