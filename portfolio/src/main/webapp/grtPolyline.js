@@ -1,7 +1,7 @@
 // Coordinates generated with Directions API
 // https://maps.googleapis.com/maps/api/directions/json?origin=37.423404,-121.975947&destination=37.400976,-121.941955&avoid=highways&mode=bicycling&key=AIzaSyD1Z43pgCsowhu2vY_ue5MasPUST6TDiew
 // https://maps.googleapis.com/maps/api/directions/json?origin=37.400976,-121.941955&destination=37.354502,-121.912800&avoid=highways&mode=bicycling&key=AIzaSyD1Z43pgCsowhu2vY_ue5MasPUST6TDiew
-const GRTCoordinates = [
+const grtCoordinates = [
   { lat: 37.423404, lng: -121.975947 },
   { lat: 37.42328, lng: -121.97517 },
   { lat: 37.42316, lng: -121.97415 },

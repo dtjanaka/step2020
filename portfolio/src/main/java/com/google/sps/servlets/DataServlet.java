@@ -25,6 +25,9 @@ import com.google.appengine.api.datastore.Query.FilterPredicate;
 import com.google.appengine.api.datastore.Query.SortDirection;
 import com.google.appengine.api.users.UserService;
 import com.google.appengine.api.users.UserServiceFactory;
+import com.google.cloud.translate.Translate;
+import com.google.cloud.translate.TranslateOptions;
+import com.google.cloud.translate.Translation;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import java.io.BufferedReader;
@@ -142,8 +145,13 @@ public class DataServlet extends HttpServlet {
     String numCommentsString = request.getParameter("numComments");
     String sortType = request.getParameter("sortType");
     String forProfileString = request.getParameter("profile");
+    String newLang = request.getParameter("lang");
     int numComments = 10; // Show 10 comments by default
     boolean forProfile = false;
+
+    if (newLang == null) {
+        newLang = "en";
+    }
 
     if (sortType == null) {
       sortType = "dsc";
@@ -185,11 +193,22 @@ public class DataServlet extends HttpServlet {
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
     PreparedQuery storedComments = datastore.prepare(query);
 
+    Translate translate = TranslateOptions.getDefaultInstance().getService();
+
     ArrayList<Comment> comments = new ArrayList<Comment>();
     int maxComments = 0;
     for (Entity entity : storedComments.asIterable()) {
       String name = (String)entity.getProperty("name");
       String comment = (String)entity.getProperty("comment");
+      if (!newLang.equals("en")) {
+        try {
+            Translation translation =
+                translate.translate(comment, Translate.TranslateOption.targetLanguage(newLang));
+            comment = translation.getTranslatedText();
+        } catch (Exception e) {
+            System.out.println("Error translating to" + newLang);
+        }
+      }
       String date = (String)entity.getProperty("date");
       String time = (String)entity.getProperty("time");
 

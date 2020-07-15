@@ -27,9 +27,9 @@
         <form id="comment-form" action="/comments" method="POST">
           <label for="name">Name:</label>
           <br />
-          <input type="text" name="name" />
+          <input type="text" name="name" id="name"/>
           <br />
-          <label for="comment">Comment:</label>
+          <label for="comment-box">Comment:</label>
           <br />
           <textarea name="comment" id="comment-box"></textarea>
           <br />
@@ -58,7 +58,7 @@
         </a>
         <br />
         <form>
-          <label for="show">Show:</label>
+          <label for="num-comments">Show:</label>
           <select
             type="text"
             id="num-comments"
@@ -71,11 +71,22 @@
             <option>50</option>
             <option>All</option>
           </select>
-          <label for="sort-by">Sort by:</label>
+          <label for="sort-type">Sort by:</label>
           <select type="text" id="sort-type" onchange="updateComments(false)">
             <option value="dsc" selected>Date: new to old</option>
             <option value="asc">Date: old to new</option>
           </select>
+          <label for="lang-comments">Language:</label>
+          <select
+            type="text"
+            id="lang-comments"
+            onchange="updateComments(false)"
+          >
+            <option value="en" selected>English</option>
+            <option value="fr">French</option>
+            <option value="zh">Chinese</option>
+            <option value="es">Spanish</option>
+          </select>          
         </form>
         <div id="content-container"></div>
       </div>
