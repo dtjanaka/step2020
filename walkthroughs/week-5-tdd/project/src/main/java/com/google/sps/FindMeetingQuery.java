@@ -31,6 +31,7 @@ public final class FindMeetingQuery {
    * existing TimeRange(s)
    */
   private ArrayList<TimeRange> resolveOverlaps(ArrayList<TimeRange> existingConflicts, TimeRange curEvent) {
+
     // Check for overlaps between new event and existing unavailabilities
     for (int curTime = 0; curTime < existingConflicts.size(); curTime++) {
       // Since array is sorted chronologically, multiple overlaps will be sequential
@@ -54,6 +55,7 @@ public final class FindMeetingQuery {
     }
     // No elements in array or no overlaps
     existingConflicts.add(curEvent);
+
     // Sort existing unavailabilities by chronological order of start time
     Collections.sort(existingConflicts, TimeRange.ORDER_BY_START); 
     
@@ -88,8 +90,8 @@ public final class FindMeetingQuery {
           t.get(i - 1).end(), t.get(i).start() - t.get(i - 1).end()));
     }
     if (t.get(i - 1).end() != TimeRange.END_OF_DAY) {
-      inverted.add(TimeRange.fromStartDuration(t.get(i - 1).end(),
-                                               1440 - t.get(i - 1).end()));
+      inverted.add(TimeRange.fromStartDuration(
+          t.get(i - 1).end(), TimeRange.WHOLE_DAY - t.get(i - 1).end()));
     }
     return inverted;
   }
