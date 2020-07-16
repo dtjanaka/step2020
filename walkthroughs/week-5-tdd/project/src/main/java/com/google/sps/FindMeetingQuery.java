@@ -25,7 +25,6 @@ import java.util.Map;
 import java.util.Set;
 
 public final class FindMeetingQuery {
-
   /**
    * Add new TimeRange to ArrayList by either appending it or combining it with
    * existing TimeRange(s)
@@ -83,15 +82,16 @@ public final class FindMeetingQuery {
     ArrayList<TimeRange> inverted = new ArrayList<TimeRange>();
     int i = 0;
     if (t.get(i).start() != TimeRange.START_OF_DAY) {
-      inverted.add(TimeRange.fromStartDuration(0, t.get(i).start()));
+      inverted.add(TimeRange.fromStartEnd(
+          TimeRange.START_OF_DAY, t.get(i).start(), false));
     }
     for (i = 1; i < t.size(); i++) {
-      inverted.add(TimeRange.fromStartDuration(
-          t.get(i - 1).end(), t.get(i).start() - t.get(i - 1).end()));
+      inverted.add(TimeRange.fromStartEnd(
+          t.get(i - 1).end(), t.get(i).start(), false));
     }
     if (t.get(i - 1).end() != TimeRange.END_OF_DAY) {
-      inverted.add(TimeRange.fromStartDuration(
-          t.get(i - 1).end(), TimeRange.WHOLE_DAY - t.get(i - 1).end()));
+      inverted.add(TimeRange.fromStartEnd(
+          t.get(i - 1).end(), TimeRange.END_OF_DAY, true));
     }
     return inverted;
   }
