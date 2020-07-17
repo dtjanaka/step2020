@@ -66,8 +66,8 @@ public final class FindMeetingQuery {
    * Return a single TimeRange spanning both input TimeRanges
    */
   private TimeRange combineTimeRanges(TimeRange t1, TimeRange t2) {
-    int newStart = t1.start() < t2.start() ? t1.start() : t2.start();
-    int newEnd = t1.end() > t2.end() ? t1.end() : t2.end();
+    int newStart = Math.min(t1.start(), t2.start());
+    int newEnd = Math.max(t1.end(), t2.end());
     int newDuration = newEnd - newStart;
     return TimeRange.fromStartDuration(newStart, newDuration);
   }
@@ -76,11 +76,13 @@ public final class FindMeetingQuery {
    * Return the opposite of input TimeRange ArrayList
    */
   private ArrayList<TimeRange> invertTimeRange(ArrayList<TimeRange> t) {
+    ArrayList<TimeRange> inverted = new ArrayList<TimeRange>(); 
+    
     if (t.size() < 1) {
-      t.add(TimeRange.WHOLE_DAY);
-      return t;
+      inverted.add(TimeRange.WHOLE_DAY);
+      return inverted;
     }
-    ArrayList<TimeRange> inverted = new ArrayList<TimeRange>();
+
     int i = 0;
     if (t.get(i).start() != TimeRange.START_OF_DAY) {
       inverted.add(TimeRange.fromStartEnd(TimeRange.START_OF_DAY,
