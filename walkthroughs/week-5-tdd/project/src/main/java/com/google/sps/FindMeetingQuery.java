@@ -183,27 +183,59 @@ public final class FindMeetingQuery {
       return mandatoryAvailability;
     }
 
-    // Not allowed to append directly to attendees Collection since
-    // it is returned as an unmodifiable Collection
-    ArrayList<String> newAttendance = new ArrayList<String>();
-    for (String person : attendees) {
-        newAttendance.add(person);
+    ArrayList<ArrayList<TimeRange>> optionalAttendeesCals = new ArrayList<ArrayList<TimeRange>>();
+    for (String curPerson : optionalAttendees) {
+        optionalAttendeesCals.add(combineAvailability(events, Arrays.asList(curPerson), duration));
     }
-    for (String person : optionalAttendees) {
-        newAttendance.add(person);
-    }
-    
-    ArrayList<TimeRange> allAvailability =
-        combineAvailability(events, newAttendance, duration);
 
-    // Basic optional attendee implementation
-    // all or nothing: if no slots exist such that ALL mandatory and 
-    // optional attendees can attend, return the slots for only 
-    // mandatory attendees
-    if (allAvailability.isEmpty()) {
+    int increment = 1;
+
+    ArrayList<ArrayList<Integer>> forEachDuration = new ArrayList<ArrayList<Integer>>();
+    for (int i = 0; i < mandatoryAvailability.size(); i++) { 
+        forEachDuration.add(new ArrayList<Integer>());
+        int n = 0;
+        while (n * increment + duration <= mandatoryAvailability.get(i).duration()) {
+
+            int numCanGo = 0;
+            for (ArrayList<TimeRange> curPersonCal : optionalAttendeesCals) {
+                for (TimeRange curTime : curPersonCal) {
+                    if ((mandatoryAvailability.get(i).start() + n * increment) >= curTime.start() && (mandatoryAvailability.get(i).start() + n * increment + duration) <= curTime.end()) {
+                        numCanGo++;
+                        break;
+                    }
+                }                    
+            }
+            forEachDuration.get(i).add(numCanGo);
+            n++;
+        }
+    }
+
+    ArrayList<Integer> maxForEach = new ArrayList<Integer>();
+    for (int i = 0; i < forEachDuration.size(); i++) {
+        maxForEach.add(Collections.max(forEachDuration.get(i)));
+    }
+
+    int maxOptionalAttendees = Collections.max(maxForEach);
+
+    if (maxOptionalAttendees == 0) {
         return mandatoryAvailability;
     }
 
-    return allAvailability;
+    ArrayList<TimeRange> optimalAvailability = new ArrayList<TimeRange>();
+    for (ArrayList<Integer> forEach : forEachDuration) {
+        if (forEach.contains(maxOptionalAttendees)) {
+            for (int k = 0; k < forEach.size(); k++) {
+                if (forEach.get(k) == maxOptionalAttendees) {    
+                    int startInc = k;
+                    while (k < forEach.size() && forEach.get(k) == maxOptionalAttendees) {
+                        k++;
+                    }
+                    k--;
+                    optimalAvailability.add(TimeRange.fromStartDuration(mandatoryAvailability.get(forEachDuration.indexOf(forEach)).start() + (startInc * increment),  (k - startInc) * increment + (int)duration));
+                }      
+            }
+        }
+    }
+    return optimalAvailability;
   }
 }
