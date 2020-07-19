@@ -342,7 +342,7 @@ public final class FindMeetingQueryTest {
     //
     // Events  :       |--A--|--C--|--B--|
     // Day     : |-----------------------------|
-    // Options : |--1--|                 |--3--|
+    // Options : |--1--|                 |--2--|
 
     Collection<Event> events = Arrays.asList(
         new Event("Event 1", TimeRange.fromStartDuration(TIME_0800AM, DURATION_30_MINUTES),
@@ -460,7 +460,7 @@ public final class FindMeetingQueryTest {
     //           |--------------D--------------|
     // Events  :       |--A--|--C--|--B--|
     // Day     : |-----------------------------|
-    // Options : |--1--|                 |--3--|
+    // Options : |--1--|                 |--2--|
 
     Collection<Event> events = Arrays.asList(
         new Event("Event 1", TimeRange.fromStartDuration(TIME_0800AM, DURATION_30_MINUTES),
@@ -488,15 +488,15 @@ public final class FindMeetingQueryTest {
   @Test
   public void maximizeOptionalAttendeesComplex() {
     // Have each person have different events. We should see two options because each mandatory 
-    // person has split the restricted times and an optional attendee is available for two of the
-    // three slots in the mandatory attendees' calendars
+    // person has split the restricted times and the most optional attendees are available in 
+    // two of these resulting slots 
     //
-    //           |--------------D--------------|
+    //           |--------------D---------------|
     //                                |--H--|
     //               |--E--|    |--F--| |--G--|
     // Events  :       |--A--|-C-| |--B-|
-    // Day     : |-----------------------------|
-    // Options : |--1--|                 |--3--|
+    // Day     : |------------------------------|
+    // Options : |-1|                         |2|
 
     Collection<Event> events = Arrays.asList(
         new Event("Event 1", TimeRange.fromStartDuration(TIME_0800AM, DURATION_30_MINUTES),
