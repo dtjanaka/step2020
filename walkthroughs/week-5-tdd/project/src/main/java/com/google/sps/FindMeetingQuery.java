@@ -18,10 +18,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 public final class FindMeetingQuery {
@@ -126,21 +124,20 @@ public final class FindMeetingQuery {
     // Collect all slots which can be attended by the maximum number of 
     // optional attendees
     ArrayList<TimeRange> optimalAvailability = new ArrayList<TimeRange>();
-    for (ArrayList<Integer> forEach : forEachDuration) {
-      if (forEach.contains(maxOptionalAttendees)) {
-        for (int k = 0; k < forEach.size(); k++) {
-          if (forEach.get(k) == maxOptionalAttendees) {
-            int startInc = k;
-            while (k < forEach.size() &&
-                   forEach.get(k) == maxOptionalAttendees) {
-              k++;
+    for (ArrayList<Integer> curSlots : forEachDuration) {
+      if (curSlots.contains(maxOptionalAttendees)) {
+        for (int curSlotsPos = 0; curSlotsPos < curSlots.size(); curSlotsPos++) {
+          if (curSlots.get(curSlotsPos) == maxOptionalAttendees) {
+            int startPos = curSlotsPos;
+            while (curSlotsPos < curSlots.size() &&
+                   curSlots.get(curSlotsPos) == maxOptionalAttendees) {
+              curSlotsPos++;
             }
-            k--;
+            curSlotsPos--;
+            int curTimeRange = forEachDuration.indexOf(curSlots);
             optimalAvailability.add(TimeRange.fromStartDuration(
-                mandatoryAvailability.get(forEachDuration.indexOf(forEach))
-                        .start() +
-                    (startInc * increment),
-                (k - startInc) * increment + (int)duration));
+                mandatoryAvailability.get(curTimeRange).start() + (startPos * increment),
+                (curSlotsPos - startPos) * increment + (int)duration));
           }
         }
       }
