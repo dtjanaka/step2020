@@ -31,6 +31,6 @@ public class DeleteData extends HttpServlet {
       Key commentKey = entity.getKey();
       datastore.delete(commentKey);
     }
-    response.sendRedirect("");
+    response.sendRedirect("/comments.html");
   }
 }

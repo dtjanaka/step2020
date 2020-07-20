@@ -61,6 +61,7 @@ function changeProfilePic() {
     'pfp_gwc.jpg',
     'pfp_mer.jpg',
     'pfp_terra.jpg',
+    'pfp_alca.jpg'
   ];
 
   // Pick random different image.
