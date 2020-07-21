@@ -10,6 +10,7 @@ window.onload = function () {
   let isMoving = false;
   let x = 0;
   let y = 0;
+  let toInvert = [];
 
   c.addEventListener('mousedown', (e) => {
     let rect = e.currentTarget.getBoundingClientRect();
@@ -20,14 +21,7 @@ window.onload = function () {
 
   c.addEventListener('mousemove', (e) => {
     if (isMoving === true) {
-      let id = ctx.getImageData(0, 0, c.width, c.height);
-      let pixels = id.data;
-      // row-major ordering
-      let startIndex = y * id.width * 4 + x * 4;
-      pixels[startIndex] = 255 - pixels[startIndex];
-      pixels[startIndex + 1] = 255 - pixels[startIndex + 1];
-      pixels[startIndex + 2] = 255 - pixels[startIndex + 2];
-      ctx.putImageData(id, 0, 0);
+      toInvert.push({ x: x, y: y });
       let rect = e.currentTarget.getBoundingClientRect();
       x = e.clientX - rect.left;
       y = e.clientY - rect.top;
@@ -38,11 +32,14 @@ window.onload = function () {
     if (isMoving === true) {
       let id = ctx.getImageData(0, 0, c.width, c.height);
       let pixels = id.data;
-      // row-major ordering
-      let startIndex = y * id.width * 4 + x * 4;
-      pixels[startIndex] = 255 - pixels[startIndex];
-      pixels[startIndex + 1] = 255 - pixels[startIndex + 1];
-      pixels[startIndex + 2] = 255 - pixels[startIndex + 2];
+      for (let point = 0; point < toInvert.length; point++) {
+        // row-major ordering
+        let startIndex =
+          toInvert[point].y * id.width * 4 + toInvert[point].x * 4;
+        pixels[startIndex] = 255 - pixels[startIndex];
+        pixels[startIndex + 1] = 255 - pixels[startIndex + 1];
+        pixels[startIndex + 2] = 255 - pixels[startIndex + 2];
+      }
       ctx.putImageData(id, 0, 0);
       x = 0;
       y = 0;
