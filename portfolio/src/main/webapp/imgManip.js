@@ -37,8 +37,10 @@ window.onload = function () {
 
   c.addEventListener('mousedown', (e) => {
     let rect = e.currentTarget.getBoundingClientRect();
-    x = e.clientX - rect.left;
-    y = e.clientY - rect.top;
+    x = Math.floor(e.clientX - rect.left);
+    y = Math.floor(e.clientY - rect.top);
+    console.log(x);
+    console.log(y);
     isMoving = true;
   });
 
@@ -46,8 +48,8 @@ window.onload = function () {
     if (isMoving === true) {
       invertLocally();
       let rect = e.currentTarget.getBoundingClientRect();
-      x = e.clientX - rect.left;
-      y = e.clientY - rect.top;
+      x = Math.floor(e.clientX - rect.left);
+      y = Math.floor(e.clientY - rect.top);
     }
   });
 
