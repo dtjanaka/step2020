@@ -96,7 +96,7 @@ function ticTacToe(cell) {
   } else {
     whichCell.innerText = '⭕';
   }
-  whichCell.onclick = ''; // instead of disabling button, which greys out text
+  whichCell.onclick = null; // instead of disabling button, which greys out text
 
   const row = Math.floor((cell - 1) / 3);
   xando[playerTurn][row]++;
@@ -126,7 +126,7 @@ function ticTacToe(cell) {
 
   if (winner !== undefined) {
     for (let i = 1; i < 10; i++) {
-      document.getElementById(i).onclick = '';
+      document.getElementById(i).onclick = null;
     }
     document.getElementById('player-turn').innerText =
       'Player ' + (winner ? 'O' : 'X') + ' wins!';
@@ -136,7 +136,7 @@ function ticTacToe(cell) {
   let tied = true;
 
   for (let i = 1; i < 10; i++) {
-    if (document.getElementById(i).onclick !== '') {
+    if (document.getElementById(i).onclick !== null) {
       tied = false;
     }
   }

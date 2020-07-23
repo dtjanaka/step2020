@@ -16,11 +16,11 @@ window.onload = function () {
   function invertLocally() {
     id = ctx.getImageData(0, 0, c.width, c.height);
     let pixels = id.data;
-    let side = document.getElementById('brush-size').value;
+    let side = +document.getElementById('brush-size').value;
     if (side > 25) {
       side = 25;
     }
-    let toInvert = squarePixels(x, y, +side, c.width, c.height);
+    let toInvert = squarePixels(x, y, side, c.width, c.height);
     for (let point = 0; point < toInvert.length; point++) {
       if (prevInv[toInvert[point].y * id.width + toInvert[point].x] === 0) {
         // row-major ordering
