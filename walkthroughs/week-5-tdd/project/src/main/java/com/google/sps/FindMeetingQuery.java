@@ -29,8 +29,10 @@ public final class FindMeetingQuery {
    */
   public Collection<TimeRange> query(Collection<Event> events,
                                      MeetingRequest request) {
+    long duration = request.getDuration();
+
     // For a meeting longer than a day, no times are possible
-    if (request.getDuration() > TimeRange.WHOLE_DAY.duration()) {
+    if (duration > TimeRange.WHOLE_DAY.duration() || duration <= 0) {
       return Arrays.asList();
     }
 
@@ -42,8 +44,6 @@ public final class FindMeetingQuery {
     if (attendees.isEmpty() && optionalAttendees.isEmpty()) {
       return Arrays.asList(TimeRange.WHOLE_DAY);
     }
-
-    long duration = request.getDuration();
 
     // If either group is empty, only need to consider the other
     if (attendees.isEmpty() || optionalAttendees.isEmpty()) {
@@ -79,29 +79,25 @@ public final class FindMeetingQuery {
     // For all possible times every {increment} minutes that allows for a 
     // meeting of the desired duration, store the number of optional attendees 
     // who can attend
-    ArrayList<ArrayList<Integer>> forEachDuration =
+    ArrayList<ArrayList<Integer>> perPotentialStartTime =
         new ArrayList<ArrayList<Integer>>();
     
     for (int i = 0; i < mandatoryAvailability.size(); i++) {
-      forEachDuration.add(new ArrayList<Integer>());
-      int n = 0;
-      while (n * increment + duration <=
-             mandatoryAvailability.get(i).duration()) {
-
+      perPotentialStartTime.add(new ArrayList<Integer>());
+      for (int potentialStartTime = mandatoryAvailability.get(i).start(); 
+           potentialStartTime <= mandatoryAvailability.get(i).end() - duration; 
+           potentialStartTime += increment) {
         int numCanGo = 0;
         for (ArrayList<TimeRange> curPersonCal : optionalAttendeesCals) {
           for (TimeRange curTime : curPersonCal) {
-            int incrementedStart = 
-                mandatoryAvailability.get(i).start() + n * increment;
-            if (incrementedStart >= curTime.start() &&
-                (incrementedStart + duration) <= curTime.end()) {
+            if (potentialStartTime >= curTime.start() &&
+                (potentialStartTime + duration) <= curTime.end()) {
               numCanGo++;
               break;
             }
           }
         }
-        forEachDuration.get(i).add(numCanGo);
-        n++;
+        perPotentialStartTime.get(i).add(numCanGo);
       }
     }
 
@@ -109,8 +105,8 @@ public final class FindMeetingQuery {
     // considered
     ArrayList<Integer> maxForEach = new ArrayList<Integer>();
     
-    for (int i = 0; i < forEachDuration.size(); i++) {
-      maxForEach.add(Collections.max(forEachDuration.get(i)));
+    for (int i = 0; i < perPotentialStartTime.size(); i++) {
+      maxForEach.add(Collections.max(perPotentialStartTime.get(i)));
     }
 
     int maxOptionalAttendees = Collections.max(maxForEach);
@@ -124,7 +120,7 @@ public final class FindMeetingQuery {
     // Collect all slots which can be attended by the maximum number of 
     // optional attendees
     ArrayList<TimeRange> optimalAvailability = new ArrayList<TimeRange>();
-    for (ArrayList<Integer> curSlots : forEachDuration) {
+    for (ArrayList<Integer> curSlots : perPotentialStartTime) {
       if (curSlots.contains(maxOptionalAttendees)) {
         for (int curSlotsPos = 0; curSlotsPos < curSlots.size(); curSlotsPos++) {
           if (curSlots.get(curSlotsPos) == maxOptionalAttendees) {
@@ -134,7 +130,7 @@ public final class FindMeetingQuery {
               curSlotsPos++;
             }
             curSlotsPos--;
-            int curTimeRange = forEachDuration.indexOf(curSlots);
+            int curTimeRange = perPotentialStartTime.indexOf(curSlots);
             optimalAvailability.add(TimeRange.fromStartDuration(
                 mandatoryAvailability.get(curTimeRange).start() + (startPos * increment),
                 (curSlotsPos - startPos) * increment + (int)duration));
