@@ -344,8 +344,7 @@ button:hover {
   float: left;
 }
 
-#comments-logged-in,
-#profile-logged-in {
+#content-logged-in {
   display: none;
 }
 

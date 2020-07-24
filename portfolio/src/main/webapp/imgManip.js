@@ -1,4 +1,5 @@
 window.onload = function () {
+  onloadPage('imgmanip');
   let c = document.getElementById('canvas-1');
   let ctx = c.getContext('2d');
   let imgElement = document.createElement('img');
@@ -16,9 +17,10 @@ window.onload = function () {
   function invertLocally() {
     id = ctx.getImageData(0, 0, c.width, c.height);
     let pixels = id.data;
-    let side = +document.getElementById('brush-size').value;
-    if (side > 25) {
-      side = 25;
+    let brushSizeInput = document.getElementById('brush-size');
+    let side = +brushSizeInput.value;
+    if (side > brushSizeInput.max) {
+      side = brushSizeInput.max;
     }
     let toInvert = squarePixels(x, y, side, c.width, c.height);
     for (let point = 0; point < toInvert.length; point++) {
@@ -39,8 +41,6 @@ window.onload = function () {
     let rect = e.currentTarget.getBoundingClientRect();
     x = Math.floor(e.clientX - rect.left);
     y = Math.floor(e.clientY - rect.top);
-    console.log(x);
-    console.log(y);
     isMoving = true;
   });
 
@@ -73,4 +73,10 @@ function squarePixels(x, y, s, w, h) {
     }
   }
   return toInvert;
+}
+
+async function getBlobUploadUrl() {
+  const response = await fetch('/blob-upload');
+  const result = await response.json();
+  document.getElementById('img-upload-form').action = result;
 }

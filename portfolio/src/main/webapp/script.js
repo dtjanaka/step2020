@@ -258,7 +258,7 @@ function verifyRecaptcha() {
 /**
  * Create login or logout button.
  *
- * @param type  0 for login, 1 for logout
+ * @param type  false for login, true for logout
  * @param url   link for login/logout
  */
 function createLoginLogout(type, url) {
@@ -272,21 +272,26 @@ function createLoginLogout(type, url) {
 }
 
 /**
- * Runs when the body of comments page loads.
- * Either displays login button or full comments page and logout button.
+ * Runs when the body of a login-restricted page loads.
+ * Either displays login button or full page and logout button.
  */
-async function onloadComments(profile) {
-  const response = await fetch('/login-status');
+async function onloadPage(page) {
+  let url = '/login-status' + '?page=' + page;
+  const response = await fetch(url);
   const result = await response.json();
   if (result.loggedIn) {
-    document.getElementById('comments-logged-in').style.display = 'initial';
+    document.getElementById('content-logged-in').style.display = 'initial';
     document
       .getElementById('login-logout')
-      .appendChild(createLoginLogout(1, result.url));
-    updateComments(profile);
+      .appendChild(createLoginLogout(true, result.url));
+    if (page == 'comments' || page == 'profile') {
+        updateComments(page);
+    } else if (page == 'imgmanip') {
+        getBlobUploadUrl();
+    }
   } else {
     document
       .getElementById('login-logout')
-      .appendChild(createLoginLogout(0, result.url));
+      .appendChild(createLoginLogout(false, result.url));
   }
 }
