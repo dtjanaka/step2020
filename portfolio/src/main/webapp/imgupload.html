@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta charset="UTF-8" />
+    <title>Image Upload</title>
+    <link rel="icon" href="/images/IMG_1502_circular.ico" type="image/x-icon" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="style.css" />
+    <script src="script.js"></script>
+  </head>
+  <body onload="onloadPage('imgupload')">
+    <div id="content">
+      <div id="login-logout"></div>
+      <div id="content-logged-in">
+        <br />
+        <form id="img-upload-form" method="POST" enctype="multipart/form-data" action="">
+        <div style="width: 100%">
+          <label for="image">Upload an image:</label>
+          <input type="file" name="image" required />
+          </div>
+          <div style="width: 100%">
+          <label for="name">Name your image:</label>
+          <input type="text" name="name" />
+          </div>
+          <br />
+          <button type="submit" id="upload-image" class="center misc-button">
+            Upload
+          </button>
+        </form>
+      </div>
+    </div>
+  </body>
+</html>

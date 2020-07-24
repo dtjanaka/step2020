@@ -286,7 +286,7 @@ async function onloadPage(page) {
       .appendChild(createLoginLogout(true, result.url));
     if (page == 'comments' || page == 'profile') {
         updateComments(page);
-    } else if (page == 'imgmanip') {
+    } else if (page == 'imgupload') {
         getBlobUploadUrl();
     }
   } else {
@@ -294,4 +294,10 @@ async function onloadPage(page) {
       .getElementById('login-logout')
       .appendChild(createLoginLogout(false, result.url));
   }
+}
+
+async function getBlobUploadUrl() {
+  const response = await fetch('/blob-upload');
+  const result = await response.json();
+  document.getElementById('img-upload-form').action = result;
 }

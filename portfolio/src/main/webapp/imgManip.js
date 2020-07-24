@@ -1,5 +1,7 @@
 window.onload = function () {
-  onloadPage('imgmanip');
+  if (window.location.pathname === '/imgmanip.html') {
+    onloadPage('imgmanip');
+  }
   let c = document.getElementById('canvas-1');
   let ctx = c.getContext('2d');
   let imgElement = document.createElement('img');
@@ -73,10 +75,4 @@ function squarePixels(x, y, s, w, h) {
     }
   }
   return toInvert;
-}
-
-async function getBlobUploadUrl() {
-  const response = await fetch('/blob-upload');
-  const result = await response.json();
-  document.getElementById('img-upload-form').action = result;
 }
