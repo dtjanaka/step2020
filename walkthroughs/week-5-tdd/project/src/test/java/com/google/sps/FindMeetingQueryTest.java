@@ -89,6 +89,30 @@ public final class FindMeetingQueryTest {
   }
 
   @Test
+  public void negativeDuration() {
+    // The duration should be positive
+    int duration = -1;
+    MeetingRequest request = new MeetingRequest(Arrays.asList(PERSON_A), duration);
+
+    Collection<TimeRange> actual = query.query(NO_EVENTS, request);
+    Collection<TimeRange> expected = Arrays.asList();
+
+    Assert.assertEquals(expected, actual);
+  }
+
+  @Test
+  public void zeroDuration() {
+    // The duration should be positive
+    int duration = 0;
+    MeetingRequest request = new MeetingRequest(Arrays.asList(PERSON_A), duration);
+
+    Collection<TimeRange> actual = query.query(NO_EVENTS, request);
+    Collection<TimeRange> expected = Arrays.asList();
+
+    Assert.assertEquals(expected, actual);
+  }
+
+  @Test
   public void eventSplitsRestriction() {
     // The event should split the day into two options (before and after the event).
     Collection<Event> events = Arrays.asList(new Event("Event 1",
