@@ -13,10 +13,12 @@ import com.google.appengine.api.datastore.Query;
 import com.google.appengine.api.datastore.Query.Filter;
 import com.google.appengine.api.datastore.Query.FilterOperator;
 import com.google.appengine.api.datastore.Query.FilterPredicate;
-import com.google.appengine.api.datastore.Query.SortDirection;
 import com.google.appengine.api.users.UserService;
 import com.google.appengine.api.users.UserServiceFactory;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import javax.servlet.annotation.WebServlet;
@@ -36,8 +38,6 @@ public class BlobServlet extends HttpServlet {
       response.sendRedirect("/imgupload.html");
       return;
     }
-
-    response.setContentType("image");
 
     // Get the name entered by the user
     String name = request.getParameter("name");
@@ -91,6 +91,39 @@ public class BlobServlet extends HttpServlet {
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response)
       throws IOException {
-    //    blobstoreService.serve(blobKey, response);
+    response.setContentType("application/json");
+
+    UserService userService = UserServiceFactory.getUserService();
+    String uid = userService.getCurrentUser().getUserId();
+
+    if (!userService.isUserLoggedIn()) {
+      response.sendRedirect("/imgmanip.html");
+      return;
+    }
+    Query userQuery = new Query("User");
+    Filter propertyFilter =
+        new FilterPredicate("uid", FilterOperator.EQUAL, uid);
+
+    userQuery.setFilter(propertyFilter);
+
+    DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+    PreparedQuery user = datastore.prepare(userQuery);
+
+    Entity userEntity = user.asSingleEntity();
+
+    Query imageQuery = new Query("Image").setAncestor(userEntity.getKey());
+
+    PreparedQuery storedBlobKeys = datastore.prepare(imageQuery);
+
+    ArrayList<String> blobKeys = new ArrayList<String>();
+
+    for (Entity entity : storedBlobKeys.asIterable()) {
+      String url = "/blob-host?blobkey=" + (String)entity.getProperty("blobkey");  
+      blobKeys.add(url);
+    }
+
+    Gson gson = new GsonBuilder().setPrettyPrinting().disableHtmlEscaping().create();
+    String jsonBlobKeys = gson.toJson(blobKeys);
+    response.getWriter().println(jsonBlobKeys);
   }
 }

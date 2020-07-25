@@ -1,7 +1,6 @@
 window.onload = function () {
-  if (window.location.pathname === '/imgmanip.html') {
-    onloadPage('imgmanip');
-  }
+  onloadPage('imgmanip');
+
   let c = document.getElementById('canvas-1');
   let ctx = c.getContext('2d');
   let imgElement = document.createElement('img');

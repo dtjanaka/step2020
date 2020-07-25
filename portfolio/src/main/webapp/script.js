@@ -284,10 +284,12 @@ async function onloadPage(page) {
     document
       .getElementById('login-logout')
       .appendChild(createLoginLogout(true, result.url));
-    if (page == 'comments' || page == 'profile') {
+    if (page === 'comments' || page === 'profile') {
         updateComments(page);
-    } else if (page == 'imgupload') {
+    } else if (page === 'imgupload') {
         getBlobUploadUrl();
+    } else if (page === 'imgmanip') {
+        populateImages();
     }
   } else {
     document
@@ -300,4 +302,22 @@ async function getBlobUploadUrl() {
   const response = await fetch('/blob-upload');
   const result = await response.json();
   document.getElementById('img-upload-form').action = result;
+}
+
+function createImgElement(url) {
+  let link = document.createElement('a');
+  link.href = url;
+  let imgElement = document.createElement('img');
+  imgElement.src = url;
+  imgElement.style.width = '200px';
+  link.appendChild(imgElement);
+  return link;
+}
+
+async function populateImages() {
+    const response = await fetch('/blobs');
+    const result = await response.json();
+    for (let img = 0; img < result.length; img++) {
+        document.getElementById('gallery').appendChild(createImgElement(result[img]));
+    }
 }
