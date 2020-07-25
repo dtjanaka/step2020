@@ -21,10 +21,8 @@ function inversePaint(src, w, h) {
     id = ctx.getImageData(0, 0, c.width, c.height);
     let pixels = id.data;
     let brushSizeInput = document.getElementById('brush-size');
-    let side = +brushSizeInput.value;
-    if (side > brushSizeInput.max) {
-      side = brushSizeInput.max;
-    }
+    let side = Math.max(Math.min(+brushSizeInput.value, +brushSizeInput.max), 
+                        +brushSizeInput.min);
     let toInvert = squarePixels(x, y, side, c.width, c.height);
     for (let point = 0; point < toInvert.length; point++) {
       if (prevInv[toInvert[point].y * id.width + toInvert[point].x] === 0) {
