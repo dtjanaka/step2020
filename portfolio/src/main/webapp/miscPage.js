@@ -18,6 +18,7 @@ function createMap() {
     center : {lat : 37.39, lng : -121.945},
     zoom : 13,
   });
+
   const GRTStartMarker = new google.maps.Marker({
     position : {lat : 37.423404, lng : -121.975947},
     map : map,
@@ -92,7 +93,7 @@ function createMap() {
     strokeWeight : 2,
   });
 
-  GRTPath.setMap(map);
+  grtPath.setMap(map);
 }
 
 function closeInfo() {
@@ -111,8 +112,13 @@ function changeSlide(slideshowNum, direction) {
     [ 'IMG_8732.jpg', 'IMG_8795.jpg', 'IMG_8819.jpg' ],
     [ 'IMG_2715.jpg', 'IMG_2718.jpg', 'IMG_2722.jpg' ],
   ];
-  curShowIdxs[slideshowNum] =
-      (((curShowIdxs[slideshowNum] + direction) % 3) + 3) % 3;
+
+  curShowIdxs[slideshowNum] = (curShowIdxs[slideshowNum] + direction) % 3;
+  // Handle negative numbers: -1 % 3 = -1, want to wrap around to 2
+  if (curShowIdxs[slideshowNum] < 0) {
+      curShowIdxs[slideshowNum] += 3;
+  }
+
   const img = '/images/' + show[slideshowNum][curShowIdxs[slideshowNum]];
   if (!slideshowNum) {
     document.getElementById('show0').src = img;

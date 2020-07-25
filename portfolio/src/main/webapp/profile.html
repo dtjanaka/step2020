@@ -19,7 +19,7 @@
       <div id="content-logged-in">
         <h2>Activity</h2>
         <form>
-          <label for="show">Show:</label>
+          <label for="num-comments">Show:</label>
           <select type="text" id="num-comments" onchange="updateComments(true)">
             <option selected>10</option>
             <option>20</option>
@@ -28,12 +28,12 @@
             <option>50</option>
             <option>All</option>
           </select>
-          <label for="sort-by">Sort by:</label>
+          <label for="sort-type">Sort by:</label>
           <select type="text" id="sort-type" onchange="updateComments(true)">
             <option value="dsc" selected>Date: new to old</option>
             <option value="asc">Date: old to new</option>
           </select>
-          <label for="lang">Language:</label>
+          <label for="lang-comments">Language:</label>
           <select
             type="text"
             id="lang-comments"
