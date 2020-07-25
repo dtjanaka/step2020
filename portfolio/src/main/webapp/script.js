@@ -20,12 +20,12 @@ function addRandomPrequelQuote() {
     'Hello there.',
     'There’s always a bigger fish.',
     'I don’t like sand. It’s coarse and rough and irritating and it gets' +
-      ' everywhere.',
+        ' everywhere.',
     'Now this is podracing!',
     'I don’t care what universe you’re from, that’s got to hurt!',
     'I sense Count Dooku.',
     'His cells have the highest concentration of midi-chlorians I have' +
-      ' seen in a life-form.',
+        ' seen in a life-form.',
     'I AM the Senate!',
     'I’m just a simple man, trying to make my way in the universe.',
     'This is getting out of hand! Now, there are two of them!',
@@ -49,19 +49,9 @@ function addRandomPrequelQuote() {
 
 function changeProfilePic() {
   const images = [
-    'IMG_1502.png',
-    'pfp_fr.jpg',
-    'pfp_eg.jpg',
-    'pfp_gr.jpg',
-    'pfp_in.jpg',
-    'pfp_it.jpg',
-    'pfp_mtr.jpg',
-    'pfp_sol.jpg',
-    'pfp_uk.jpg',
-    'pfp_gwc.jpg',
-    'pfp_mer.jpg',
-    'pfp_terra.jpg',
-    'pfp_alca.jpg'
+    'IMG_1502.png', 'pfp_fr.jpg', 'pfp_eg.jpg', 'pfp_gr.jpg', 'pfp_in.jpg',
+    'pfp_it.jpg', 'pfp_mtr.jpg', 'pfp_sol.jpg', 'pfp_uk.jpg', 'pfp_gwc.jpg',
+    'pfp_mer.jpg', 'pfp_terra.jpg', 'pfp_alca.jpg'
   ];
 
   // Pick random different image.
@@ -77,98 +67,6 @@ function changeProfilePic() {
   imgElement.src = img;
 }
 
-// Keep track of Xs and Os in each row, column, and diagonal
-// Top row, middle row, bottom row, L col, M col, R col,
-// upper left to lower right diag, lower left to upper right diag
-let xando = [
-  [0, 0, 0, 0, 0, 0, 0, 0] /* Xs */,
-  [0, 0, 0, 0, 0, 0, 0, 0] /* Os */,
-];
-let playerTurn = 0;
-
-/**
- * Process tic-tac-toe game.
- */
-function ticTacToe(cell) {
-  const whichCell = document.getElementById(cell);
-  if (playerTurn === 0) {
-    whichCell.innerText = '❌';
-  } else {
-    whichCell.innerText = '⭕';
-  }
-  whichCell.onclick = null; // instead of disabling button, which greys out text
-
-  const row = Math.floor((cell - 1) / 3);
-  xando[playerTurn][row]++;
-
-  const column = (cell - 1) % 3;
-  xando[playerTurn][column + 3]++;
-
-  if (row === column) {
-    // upper left - lower right diag
-    xando[playerTurn][6]++;
-  }
-
-  if (row + column === 2) {
-    // lower left - upper right diag
-    xando[playerTurn][7]++;
-  }
-
-  let winner;
-
-  for (let player = 0; player < 2; player++) {
-    for (let j = 0; j < 8; j++) {
-      if (xando[player][j] >= 3) {
-        winner = player;
-      }
-    }
-  }
-
-  if (winner !== undefined) {
-    for (let i = 1; i < 10; i++) {
-      document.getElementById(i).onclick = null;
-    }
-    document.getElementById('player-turn').innerText =
-      'Player ' + (winner ? 'O' : 'X') + ' wins!';
-    return;
-  }
-
-  let tied = true;
-
-  for (let i = 1; i < 10; i++) {
-    if (document.getElementById(i).onclick !== null) {
-      tied = false;
-    }
-  }
-
-  if (tied) {
-    document.getElementById('player-turn').innerText = 'Draw! No winner.';
-  } else {
-    document.getElementById('player-turn').innerText =
-      'Player ' + (playerTurn ? 'X' : 'O') + ', make your move.';
-    playerTurn = +!playerTurn;
-  }
-}
-
-/**
- * Reset tic-tac-toe board.
- */
-function resetTicTacToe() {
-  xando = [
-    [0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0],
-  ];
-  for (let i = 1; i < 10; i++) {
-    document.getElementById(i).innerText = '';
-    document.getElementById(i).onclick = function () {
-      ticTacToe(i);
-    };
-    playerTurn = 0;
-    document.getElementById('player-turn').innerText =
-      'Player X, make your move.';
-  }
-}
-
 /**
  * Fetch content from data servlet and place in container.
  */
@@ -180,16 +78,9 @@ async function updateComments(profile) {
   let trLang = document.getElementById('lang-comments');
   let newLang = trLang.options[trLang.selectedIndex].value;
 
-  let url =
-    '/comments?' +
-    'numComments=' +
-    numComments +
-    '&sortType=' +
-    sortType +
-    '&profile=' +
-    profile +
-    '&lang=' +
-    newLang;
+  let url = '/comments?' +
+            'numComments=' + numComments + '&sortType=' + sortType +
+            '&profile=' + profile + '&lang=' + newLang;
 
   const response = await fetch(url);
   const msg = await response.json();
@@ -199,13 +90,8 @@ async function updateComments(profile) {
   commentContainer.innerHTML = '';
 
   for (let numComment = 0; numComment < msg.length; numComment++) {
-    commentContainer.appendChild(
-      createNameElement(
-        msg[numComment].name,
-        msg[numComment].date,
-        msg[numComment].time
-      )
-    );
+    commentContainer.appendChild(createNameElement(
+        msg[numComment].name, msg[numComment].date, msg[numComment].time));
     commentContainer.appendChild(createPElement(msg[numComment].comment));
   }
 }
@@ -218,7 +104,8 @@ function createNameElement(name, date, time) {
   h3Element.innerText = name;
   h3Element.className = 'commenter-name';
   const pElement = document.createElement('p');
-  pElement.innerText = date + ' at ' + time + ' GMT'; //TODO: display time in local timezone
+  pElement.innerText =
+      date + ' at ' + time + ' GMT'; // TODO: display time in local timezone
   pElement.className = 'commenter-time';
   divElement = document.createElement('div');
   divElement.appendChild(h3Element);
@@ -240,7 +127,7 @@ function createPElement(text) {
  */
 function onloadCallback() {
   grecaptcha.render('recaptcha', {
-    sitekey: '6LcBoK8ZAAAAADiONXD5MJKnevKoPu3-tifMOeaM',
+    sitekey : '6LcBoK8ZAAAAADiONXD5MJKnevKoPu3-tifMOeaM',
   });
 }
 
@@ -276,48 +163,55 @@ function createLoginLogout(type, url) {
  * Either displays login button or full page and logout button.
  */
 async function onloadPage(page) {
-  let url = '/login-status' + '?page=' + page;
+  let url = '/login-status' +
+            '?page=' + page;
   const response = await fetch(url);
   const result = await response.json();
   if (result.loggedIn) {
     document.getElementById('content-logged-in').style.display = 'initial';
-    document
-      .getElementById('login-logout')
-      .appendChild(createLoginLogout(true, result.url));
+    document.getElementById('login-logout')
+        .appendChild(createLoginLogout(true, result.url));
     if (page === 'comments' || page === 'profile') {
-        updateComments(page);
+      updateComments(page);
     } else if (page === 'imgupload') {
-        getBlobUploadUrl();
+      getBlobUploadUrl();
     } else if (page === 'imgmanip') {
-        populateImages();
+      await populateImages();
     }
   } else {
-    document
-      .getElementById('login-logout')
-      .appendChild(createLoginLogout(false, result.url));
+    document.getElementById('login-logout')
+        .appendChild(createLoginLogout(false, result.url));
   }
 }
 
+/**
+ * Fetch a Blobstore upload link. 
+ */
 async function getBlobUploadUrl() {
   const response = await fetch('/blob-upload');
   const result = await response.json();
   document.getElementById('img-upload-form').action = result;
 }
 
+/**
+ * Create an image element with width 200px from a src link.
+ */
 function createImgElement(url) {
-  let link = document.createElement('a');
-  link.href = url;
   let imgElement = document.createElement('img');
   imgElement.src = url;
+  imgElement.classList = 'for-editing';
   imgElement.style.width = '200px';
-  link.appendChild(imgElement);
-  return link;
+  return imgElement;
 }
 
+/**
+ * Add images from Blobstore to editing gallery.
+ */
 async function populateImages() {
-    const response = await fetch('/blobs');
-    const result = await response.json();
-    for (let img = 0; img < result.length; img++) {
-        document.getElementById('gallery').appendChild(createImgElement(result[img]));
-    }
+  const response = await fetch('/blobs');
+  const result = await response.json();
+  for (let img = 0; img < result.length; img++) {
+    document.getElementById('gallery').appendChild(
+        createImgElement(result[img]));
+  }
 }
