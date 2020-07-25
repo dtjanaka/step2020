@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta charset="UTF-8" />
+    <title>Image Editing</title>
+    <link rel="icon" href="/images/IMG_1502_circular.ico" type="image/x-icon" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="style.css" />
+    <script src="invertWidget.js"></script>
+    <script src="imgManip.js"></script>
+    <script src="script.js"></script>
+  </head>
+  <body>
+    <div id="content">
+      <div id="login-logout"></div>
+      <div id="content-logged-in">
+        <br />
+        <div id="gallery"></div>
+      </div>
+      <div id="manip" style="display: none;">
+        <canvas id="canvas-1"></canvas>
+        <form id="brush-options">
+          <label for="brush-size">Brush size:</label>
+          <input
+            type="number"
+            id="brush-size"
+            name="brush-size"
+            min="1"
+            max="25"
+            value="5"
+          />
+        </form>
+      </div>
+    </div>
+  </body>
+</html>

@@ -33,6 +33,7 @@ public final class FindMeetingQuery {
 
     // For a meeting longer than a day, no times are possible
     if (duration > TimeRange.WHOLE_DAY.duration() || duration <= 0) {
+
       return Arrays.asList();
     }
 
@@ -79,6 +80,7 @@ public final class FindMeetingQuery {
     // For all possible times every {increment} minutes that allows for a 
     // meeting of the desired duration, store the number of optional attendees 
     // who can attend
+
     ArrayList<ArrayList<Integer>> perPotentialStartTime =
         new ArrayList<ArrayList<Integer>>();
     

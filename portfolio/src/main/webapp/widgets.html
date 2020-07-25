@@ -10,9 +10,11 @@
       rel="stylesheet"
     />
     <link rel="stylesheet" href="style.css" />
+    <script src="tictactoe.js"></script>
+    <script src="invertWidget.js"></script>
     <script src="script.js"></script>
   </head>
-  <body>
+  <body onload="inversePaint('/images/angular.png', 256, 256)">
     <div id="content">
       <h1>Widgets</h1>
       <h2>Tic-Tac-Toe</h2>
@@ -33,10 +35,27 @@
           <button id="8" class="tictactoe" onclick="ticTacToe(8)"></button>
           <button id="9" class="tictactoe" onclick="ticTacToe(9)"></button>
         </div>
+        <button
+          id="reset"
+          class="center misc-button"
+          onclick="resetTicTacToe()"
+        >
+          Reset board
+        </button>
       </div>
-      <button id="reset" class="center misc-button" onclick="resetTicTacToe()">
-        Reset board
-      </button>
+      <h2>Image Manipulation</h2>
+      <canvas id="canvas-1" width="256" height="256"> </canvas>
+      <form id="brush-options">
+        <label for="brush-size">Brush size:</label>
+        <input
+          type="number"
+          id="brush-size"
+          name="brush-size"
+          min="1"
+          max="25"
+          value="5"
+        />
+      </form>
     </div>
   </body>
 </html>

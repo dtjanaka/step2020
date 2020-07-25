@@ -19,6 +19,10 @@ button:disabled {
   cursor: not-allowed;
 }
 
+#gallery img {
+  cursor: pointer;
+}
+
 h1 {
   font-size: 50px;
   margin-top: 20px;
@@ -125,6 +129,14 @@ td {
 #links,
 #links-2 {
   text-align: center;
+}
+
+#canvas-1 {
+  padding-left: 0;
+  padding-right: 0;
+  margin-left: auto;
+  margin-right: auto;
+  display: block;
 }
 
 .center,
@@ -336,9 +348,12 @@ button:hover {
   float: left;
 }
 
-#comments-logged-in,
-#profile-logged-in {
+#content-logged-in {
   display: none;
+}
+
+#brush-options {
+  margin-top: 20px;
 }
 
 @media only screen and (max-width: 1600px) {
