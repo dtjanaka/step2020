@@ -37,8 +37,7 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
+import java.time.Instant;
 import java.util.ArrayList;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -109,20 +108,13 @@ public class DataServlet extends HttpServlet {
       return;
     }
 
-    LocalDateTime now = LocalDateTime.now();
-    String nowString = now.toString();
-    DateTimeFormatter date = DateTimeFormatter.ofPattern("d MMMM yyyy");
-    DateTimeFormatter time = DateTimeFormatter.ofPattern("H:mm:ss a");
-    String formatDate = now.format(date);
-    String formatTime = now.format(time);
+    String now = Instant.now().toString();
 
     Entity commentEntity = new Entity("Comment");
     commentEntity.setProperty("name", name);
     commentEntity.setProperty("comment", comment);
     commentEntity.setProperty("uid", uid);
-    commentEntity.setProperty("date", formatDate);
-    commentEntity.setProperty("time", formatTime);
-    commentEntity.setProperty("iso8601", nowString);
+    commentEntity.setProperty("utc", now);
 
     datastore.put(commentEntity);
 
@@ -180,8 +172,8 @@ public class DataServlet extends HttpServlet {
     }
 
     Query query = new Query("Comment").addSort(
-        "iso8601", sortType.equals(ASCENDING_COMMENTS) ? SortDirection.ASCENDING
-                                                       : SortDirection.DESCENDING);
+        "utc", sortType.equals(ASCENDING_COMMENTS) ? SortDirection.ASCENDING
+                                                   : SortDirection.DESCENDING);
 
     if (forProfile) {
       Filter propertyFilter =
@@ -209,17 +201,18 @@ public class DataServlet extends HttpServlet {
             System.out.println("Error translating to" + newLang);
         }
       }
-      String date = (String)entity.getProperty("date");
-      String time = (String)entity.getProperty("time");
+      String utc = (String)entity.getProperty("utc");
 
       maxComments++;
-      comments.add(new Comment(name, comment, date, time, null));
+      comments.add(new Comment(name, comment, utc, null));
       if (!numCommentsString.equals(ALL_COMMENTS) && maxComments >= numComments) {
         break;
       }
     }
 
-    Gson gson = new GsonBuilder().setPrettyPrinting().create();
+    //TODO: known issue where translated comments display &#39; instead of ' 
+
+    Gson gson = new GsonBuilder().setPrettyPrinting().disableHtmlEscaping().create();
     String jsonComments = gson.toJson(comments);
     response.getWriter().println(jsonComments);
   }

@@ -5,10 +5,10 @@ indexes:
 - kind: Comment
   properties:
   - name: uid
-  - name: iso8601
+  - name: utc
     direction: desc
 
 - kind: Comment
   properties:
   - name: uid
-  - name: iso8601
+  - name: utc

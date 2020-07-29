@@ -91,7 +91,7 @@ async function updateComments(profile) {
 
   for (let numComment = 0; numComment < msg.length; numComment++) {
     commentContainer.appendChild(createNameElement(
-        msg[numComment].name, msg[numComment].date, msg[numComment].time));
+        msg[numComment].name, msg[numComment].utc));
     commentContainer.appendChild(createPElement(msg[numComment].comment));
   }
 }
@@ -99,13 +99,13 @@ async function updateComments(profile) {
 /**
  * Creates a <h3> element containing commenter name.
  */
-function createNameElement(name, date, time) {
+function createNameElement(name, utc) {
   const h3Element = document.createElement('h3');
   h3Element.innerText = name;
   h3Element.className = 'commenter-name';
   const pElement = document.createElement('p');
-  pElement.innerText =
-      date + ' at ' + time + ' GMT'; // TODO: display time in local timezone
+  let tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
+  pElement.innerText = moment(utc).tz(tz).format('D MMM YYYY [at] h:mm a');
   pElement.className = 'commenter-time';
   divElement = document.createElement('div');
   divElement.appendChild(h3Element);
