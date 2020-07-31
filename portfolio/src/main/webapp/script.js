@@ -164,7 +164,7 @@ function createLoginLogout(type, url) {
  */
 async function onloadPage(page) {
   let url = '/login-status' +
-            '?page=' + page;
+            '?page=' + page + ".html";
   const response = await fetch(url);
   const result = await response.json();
   if (result.loggedIn) {
