@@ -20,47 +20,45 @@
         <form
           id="project-form"
           method="POST"
-          enctype="multipart/form-data"
           action="/projects"
         >
-          <div style="width: 100%;">
-            <label for="proj-id">Project ID:</label>
-            <input type="text" name="proj-id" required />
-          </div>
           <div style="width: 100%;">
             <label for="mode">Mode:</label>
             <input type="text" name="mode" required />
           </div>
           <div style="width: 100%;">
-            <label for="img-name">Image name:</label>
-            <input type="text" name="img-name" required />
+            <label for="proj-id">Project ID:</label>
+            <input type="text" name="proj-id" />
           </div>
           <div style="width: 100%;">
-            <label for="image">Upload an image:</label>
-            <input type="file" name="image" />
+            <label for="proj-name">Project name:</label>
+            <input type="text" name="proj-name" />
           </div>
           <div style="width: 100%;">
-            <label for="new-name">New name:</label>
-            <input type="text" name="new-name" />
+            <label for="owners">Owners:</label>
+            <input type="text" name="owners" />
           </div>
           <div style="width: 100%;">
-            <label for="parent-img">Parent image name:</label>
-            <input type="text" name="parent-img" />
+            <label for="editors">Editors:</label>
+            <input type="text" name="editors" />
           </div>
           <div style="width: 100%;">
-            <label for="tags">Tags:</label>
-            <input type="text" name="tags" />
+            <label for="visibility">Visibility:</label><br />
+            <input type="radio" name="visibility" value="public">
+            <label for="true">Public</label><br />
+            <input type="radio" name="visibility" value="private">
+            <label for="false">Private</label><br />
           </div>
           <div style="width: 100%;">
-            <label for="delete">Delete image:</label><br />
+            <label for="delete">Delete project:</label><br />
             <input type="radio" name="delete" value="true">
             <label for="true">True</label><br />
             <input type="radio" name="delete" value="false">
             <label for="false">False</label><br />
           </div>
           <br />
-          <button type="submit" id="upload-image" class="center misc-button">
-            Upload
+          <button type="submit" id="create-project" class="center misc-button">
+            Create
           </button>
         </form>
         <br />
