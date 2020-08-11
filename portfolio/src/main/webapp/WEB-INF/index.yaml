@@ -12,3 +12,94 @@ indexes:
   properties:
   - name: uid
   - name: utc
+
+- kind: Project
+  properties:
+  - name: owners
+  - name: visibility
+  - name: utc
+    direction: desc
+
+- kind: Project
+  properties:
+  - name: editors
+  - name: visibility
+  - name: utc
+    direction: desc
+
+- kind: Project
+  properties:
+  - name: owners
+  - name: utc
+    direction: desc
+
+- kind: Project
+  properties:
+  - name: editors
+  - name: utc
+    direction: desc
+
+- kind: Project
+  properties:
+  - name: owners
+  - name: utc
+
+- kind: Project
+  properties:
+  - name: editors
+  - name: utc
+
+- kind: Project
+  properties:
+  - name: visibility
+  - name: utc
+    direction: desc
+
+- kind: Project
+  properties:
+  - name: visibility
+  - name: utc
+
+- kind: Image
+  ancestor: yes
+  properties:
+  - name: utc
+    direction: desc
+
+- kind: Image
+  ancestor: yes
+  properties:
+  - name: utc
+
+- kind: Mask
+  ancestor: yes
+  properties:
+  - name: utc
+    direction: desc
+
+- kind: Mask
+  ancestor: yes
+  properties:
+  - name: utc
+
+- kind: Mask
+  properties:
+  - name: tags
+  - name: utc
+    direction: desc
+    
+- kind: Mask
+  properties:
+  - name: tags
+  - name: utc
+
+- kind: Image
+  properties:
+  - name: tags
+  - name: utc
+    direction: desc
+
+- kind: Image
+  properties:
+  - name: tags
+  - name: utc

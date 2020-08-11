@@ -21,21 +21,27 @@ import java.io.IOException;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Map;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+/**
+ * Handles POST and GET requests for projects,
+ * allows creation and update of projects, and
+ * supports queries for projects based on various parameters.
+ */
 @WebServlet("/projects")
 public class ProjectServlet extends HttpServlet {
 
-  private Boolean isEmptyParameter(String param) {
-    return param == null || param.isEmpty();
-  }
-
+  /**
+   * Handles POST requests for projects.
+   * Responds with project ID upon successful POST.
+   * @param     {HttpServletRequest}    request
+   * @param     {HttpServletResponse}   response
+   * @return    {void}
+   */
   @Override
   public void doPost(HttpServletRequest request, HttpServletResponse response)
       throws IOException {
@@ -45,63 +51,41 @@ public class ProjectServlet extends HttpServlet {
     // Must be logged in
     if (!userService.isUserLoggedIn()) {
       response.sendRedirect("/");
-      // response.getWriter().println("a");
       return;
     }
 
     // Mode is a required parameter
-    String mode = request.getParameter("mode");
-    if (isEmptyParameter(mode) || (!mode.toLowerCase().equals("create") &&
-                                   !mode.toLowerCase().equals("update"))) {
-      response.sendRedirect("/");
-      // response.getWriter().println("b");
-      return;
-    }
-    Boolean isCreateMode = (mode.toLowerCase().equals("create"));
+    boolean isCreateMode = DataUtils.parseMode(request, response);
 
     String uEmail = userService.getCurrentUser().getEmail();
     String projId = request.getParameter("proj-id");
 
-    Entity projEntity = new Entity("Project");
+    // Will be either a new entity for creation or an existing entity for
+    // updating
+    Entity projEntity = new Entity(DataUtils.PROJECT);
+
     if (!isCreateMode) {
-      // Need project ID to update a project
-      if (isEmptyParameter(projId)) {
-        response.sendRedirect("/");
-        // response.getWriter().println("c");
-        return;
-      }
-      // Must be an owner
-      Query projQuery = new Query("Project");
+      // Must be owner to update
+      projEntity = DataUtils.getProjectEntity(projId, uEmail, false, false);
 
-      Filter ownEditFilter = new CompositeFilter(
-          CompositeFilterOperator.AND,
-          Arrays.<Filter>asList(
-              new FilterPredicate("proj-id", FilterOperator.EQUAL, projId),
-              new FilterPredicate("owners", FilterOperator.EQUAL, uEmail)));
-
-      projQuery.setFilter(ownEditFilter);
-      PreparedQuery accessibleProjects = datastore.prepare(projQuery);
-
-      if (accessibleProjects.countEntities() == 0) {
-        response.sendRedirect("/");
-        // response.getWriter().println("d");
-        return;
-      }
-      projEntity = accessibleProjects.asSingleEntity();
-
-      Boolean delete = Boolean.parseBoolean(request.getParameter("delete"));
+      // Delete overrides all other updates
+      boolean delete = Boolean.parseBoolean(request.getParameter("delete"));
       if (delete) {
         datastore.delete(projEntity.getKey());
-        response.sendRedirect("/");
+        response.sendRedirect("/"); // TODO: should redirect to projects gallery
         return;
       }
     }
 
+    // Last modified timestamp
     String now = Instant.now().toString();
     projEntity.setProperty("utc", now);
 
     String projName = request.getParameter("proj-name");
-    if (!isEmptyParameter(projName)) {
+
+    // Set the project name if provided
+    // If creating and nothing provided, set name to Untitled-{current UTC time}
+    if (!DataUtils.isEmptyParameter(projName)) {
       projEntity.setProperty("name", projName);
     } else {
       if (isCreateMode) {
@@ -110,62 +94,72 @@ public class ProjectServlet extends HttpServlet {
       // Don't do anything if updating and no name provided
     }
 
+    // Default visibility to private (only owners and editors can view)
     String visibility = request.getParameter("visibility");
-    if (isEmptyParameter(visibility) && isCreateMode) {
-      visibility = "private";
+    if (DataUtils.isEmptyParameter(visibility) && isCreateMode) {
+      visibility = DataUtils.PRIVATE;
     }
-    if (!isEmptyParameter(visibility) &&
-        (visibility.toLowerCase().equals("public") ||
-         visibility.toLowerCase().equals("private"))) {
-      projEntity.setProperty("visibility", visibility);
+    if (!DataUtils.isEmptyParameter(visibility)) {
+      visibility = visibility.toLowerCase();
+      if (visibility.equals(DataUtils.PUBLIC) ||
+          visibility.equals(DataUtils.PRIVATE)) {
+        projEntity.setProperty("visibility", visibility);
+      }
     }
 
     String ownersString = request.getParameter("owners");
     String editorsString = request.getParameter("editors");
 
-    // if create, owners = current user + any people in param, if param null,
-    // just current user if update, owners = current user + any people in param
-    // if param null, change nothing
-    if (isCreateMode || !isEmptyParameter(ownersString)) {
+    // If creating:
+    //      owners are current User and any people in parameter
+    //      if no one provided, current User is the only owner
+    // if updating:
+    //      owners are current User and any people in parameter
+    //      if no one provided, change nothing
+    if (isCreateMode || !DataUtils.isEmptyParameter(ownersString)) {
       ArrayList<String> listOwnerEmails = new ArrayList<String>();
-      listOwnerEmails.add(uEmail);
-      if (!isEmptyParameter(ownersString)) {
-        listOwnerEmails = new ArrayList(
-            Arrays.asList(ownersString.toLowerCase().split("\\s*,\\s*")));
+      if (!DataUtils.isEmptyParameter(ownersString)) {
+        listOwnerEmails = DataUtils.parseCommaList(ownersString);
       }
-      LinkedHashSet<String> hashUniqueIds =
-          new LinkedHashSet<String>(listOwnerEmails);
-      List<String> listUniqueOwnerEmails = new ArrayList<String>(hashUniqueIds);
-      projEntity.setIndexedProperty("owners", listUniqueOwnerEmails);
-
-      /*String projKey = KeyFactory.keyToString(datastore.put(projEntity));
-      com.google.cloud.datastore.Entity a =
-      com.google.cloud.datastore.Entity.newBuilder(com.google.cloud.datastore.Key.fromUrlSafe(projKey)).set("owners",
-      "a", "b").build(); Datastore datastore2 =
-      DatastoreOptions.getDefaultInstance().getService(); datastore2.put(a);*/
+      listOwnerEmails.add(uEmail);
+      projEntity.setIndexedProperty(
+          "owners", DataUtils.withDuplicatesRemoved(listOwnerEmails));
     }
 
-    // if editors non null, editors = param
-    if (!isEmptyParameter(editorsString)) {
-      ArrayList<String> listEditorEmails = new ArrayList(
-          Arrays.asList(editorsString.toLowerCase().split("\\s*,\\s*")));
-
-      LinkedHashSet<String> hashUniqueEmails =
-          new LinkedHashSet<String>(listEditorEmails);
-      ArrayList<String> listUniqueEditorEmails =
-          new ArrayList<String>(hashUniqueEmails);
-      projEntity.setProperty("editors", listUniqueEditorEmails);
+    // If anything provided for editors, overwrite current editors
+    if (!DataUtils.isEmptyParameter(editorsString)) {
+      ArrayList<String> listEditorEmails =
+          DataUtils.parseCommaList(editorsString);
+      projEntity.setIndexedProperty(
+          "editors", DataUtils.withDuplicatesRemoved(listEditorEmails));
     }
 
+    // Use URL-safe key as project ID
+    // No security risk: only information exposed are kind ("Project")
+    // and name/ID (autogenerated by Datastore)
+    // Key is incomplete until upserted to Datastore
     if (isCreateMode) {
       projEntity.setProperty("proj-id",
                              KeyFactory.keyToString(datastore.put(projEntity)));
     }
 
     datastore.put(projEntity);
-    response.sendRedirect("/");
+
+    // Return the project ID
+    response.setContentType("application/json");
+    Gson gson = new GsonBuilder().setPrettyPrinting().create();
+    String jsonProjId =
+        gson.toJson(KeyFactory.keyToString(projEntity.getKey()));
+    response.getWriter().println(jsonProjId);
   }
 
+  /**
+   * Handles GET requests for projects.
+   * Responds with JSON string of ProjectInfo objects upon successful GET.
+   * @param     {HttpServletRequest}    request
+   * @param     {HttpServletResponse}   response
+   * @return    {void}
+   */
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response)
       throws IOException {
@@ -180,18 +174,115 @@ public class ProjectServlet extends HttpServlet {
       return;
     }
 
-    /*
-    Optional parameters
-    visibility	“public” or “private”
-    owned		Boolean
-    search-term
-    global		Boolean
-    proj-id
-    With no parameters, returns proj-ids for all public and private projects for
-    given User (visibility default “all”, owned default “false”, global default
-    “false”) global any + owned “true” == global ignored visibility any + global
-    “true” → information for all public projects, visibility ignored With just
-    proj-id, returns JSON of information about Project
-    */
+    String uEmail = userService.getCurrentUser().getEmail();
+    String projId = request.getParameter("proj-id");
+
+    // Will be either a single project based on project ID or one or more
+    // projects from a query based on various parameters
+    ArrayList<Entity> projects = new ArrayList<Entity>();
+
+    // Searching for one project with a project ID
+    if (!DataUtils.isEmptyParameter(projId)) {
+      // Project must be public or User must be an owner or editor for private
+      // projects
+      Entity projEntity =
+          DataUtils.getProjectEntity(projId, uEmail, true, true);
+      projects.add(projEntity);
+    }
+
+    // Searching for multiple projects with various parameters
+    else {
+      String sort = request.getParameter("sort");
+      // Sorted in descending chronological order by default
+      if (DataUtils.isEmptyParameter(sort)) {
+        sort = DataUtils.DESCENDING_SORT;
+      }
+      sort = sort.toLowerCase();
+
+      Query projQuery =
+          new Query(DataUtils.PROJECT)
+              .addSort("utc", sort.equals(DataUtils.ASCENDING_SORT)
+                                  ? Query.SortDirection.ASCENDING
+                                  : Query.SortDirection.DESCENDING);
+
+      // Add relevant filters to array based on parameters
+      ArrayList<Filter> allFilters = new ArrayList<Filter>();
+
+      String role = request.getParameter("role");
+      String visibility = request.getParameter("visibility");
+      // Global overrides visibility and role
+      boolean global = Boolean.parseBoolean(request.getParameter("global"));
+      if (global) {
+        visibility = DataUtils.PUBLIC;
+        role = "viewer";
+      }
+
+      Filter ownFilter =
+          new FilterPredicate("owners", FilterOperator.EQUAL, uEmail);
+      Filter editFilter =
+          new FilterPredicate("editors", FilterOperator.EQUAL, uEmail);
+      Filter ownOrEditFilter = new CompositeFilter(
+          CompositeFilterOperator.OR, Arrays.asList(ownFilter, editFilter));
+
+      // By default, filter to only projects the User owns or edits
+      if (DataUtils.isEmptyParameter(role)) {
+        allFilters.add(ownOrEditFilter);
+      } else if (role.toLowerCase().equals("owner")) {
+        allFilters.add(ownFilter);
+      } else if (role.toLowerCase().equals("editor")) {
+        allFilters.add(editFilter);
+      }
+
+      // Don't filter by visibility by default
+      if (!DataUtils.isEmptyParameter(visibility) &&
+          (visibility.toLowerCase().equals(DataUtils.PUBLIC) ||
+           visibility.toLowerCase().equals(DataUtils.PRIVATE))) {
+        Filter visFilter =
+            new FilterPredicate("visibility", FilterOperator.EQUAL, visibility);
+        allFilters.add(visFilter);
+      }
+
+      // Don't filter by search term if not provided
+      // No partial matching/regex
+      String searchTerm = request.getParameter("search-term");
+      if (!DataUtils.isEmptyParameter(searchTerm)) {
+        Filter searchFilter = new FilterPredicate("name", FilterOperator.EQUAL,
+                                                  searchTerm.toLowerCase());
+        allFilters.add(searchFilter);
+      }
+
+      // A composite filter requres more than one filter
+      if (allFilters.size() == 1) {
+        projQuery.setFilter(allFilters.get(0));
+      } else {
+        projQuery.setFilter(
+            new CompositeFilter(CompositeFilterOperator.AND, allFilters));
+      }
+
+      PreparedQuery accessibleProjects = datastore.prepare(projQuery);
+      for (Entity entity : accessibleProjects.asIterable()) {
+        projects.add(entity);
+      }
+    }
+
+    // Parse Entities to custom objects
+    ArrayList<ProjectInfo> projectInfoList = new ArrayList<ProjectInfo>();
+    for (Entity entity : projects) {
+      String curProjId = (String)entity.getProperty("proj-id");
+      String curProjName = (String)entity.getProperty("name");
+      String timestamp = (String)entity.getProperty("utc");
+      String curVis = (String)entity.getProperty("visibility");
+      ArrayList<String> projOwners =
+          (ArrayList<String>)entity.getProperty("owners");
+      ArrayList<String> projEditors =
+          (ArrayList<String>)entity.getProperty("editors");
+      projectInfoList.add(new ProjectInfo(curProjId, curProjName, timestamp,
+                                          curVis, projOwners, projEditors));
+    }
+
+    Gson gson =
+        new GsonBuilder().setPrettyPrinting().disableHtmlEscaping().create();
+    String jsonProjects = gson.toJson(projectInfoList);
+    response.getWriter().println(jsonProjects);
   }
 }

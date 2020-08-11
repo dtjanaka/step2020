@@ -25,18 +25,28 @@ import java.io.IOException;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Iterator;
 import java.util.List;
-import java.util.LinkedHashSet;
 import java.util.Map;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+/**
+ * Handles POST and GET requests for images,
+ * allows creation and update of images and masks, and
+ * supports queries for images based on various parameters.
+ */
 @WebServlet("/blobs")
 public class BlobServlet extends HttpServlet {
 
+  /**
+   * Handles POST requests for images and masks.
+   * Responds with image URL and name upon successful POST.
+   * @param     {HttpServletRequest}    request
+   * @param     {HttpServletResponse}   response
+   * @return    {void}
+   */
   @Override
   public void doPost(HttpServletRequest request, HttpServletResponse response)
       throws IOException {
@@ -45,119 +55,70 @@ public class BlobServlet extends HttpServlet {
 
     // Must be logged in
     if (!userService.isUserLoggedIn()) {
-      throw new IOException("User must be logged in.");
-    }
-
-    // Mode is a required parameter
-    String mode = request.getParameter("mode");
-    if (mode == null || (mode != "create" && mode != "update")) {
-      throw new IOException("Invalid mode.");
-    }
-
-    // Check if working with image or mask
-    String parentImg = request.getParameter("parent-img");
-    Boolean isMask = false;
-    if (parentImg != null) {
-      isMask = true;
-    }
-
-    // Get the image name entered by the user
-    String imgName = request.getParameter("img-name");
-    if (imgName == null) {
-      throw new IOException("Image name must be provided.");
-    }
-
-    String projId = request.getParameter("proj-id");
-    Key projKey = KeyFactory.stringToKey(projId);
-    Entity projEntity = new Entity("Project");
-    try {
-      projEntity = datastore.get(projKey);
-    } catch (Exception e) {
       response.sendRedirect("/");
       return;
     }
-    String uid = userService.getCurrentUser().getUserId();
-    Key assetParentKey = projKey;
-    Entity imgEntity = new Entity("Image", projKey);
 
-    // Must be an owner or editor
-    Query projQuery = new Query("Project");
+    // Mode is a required parameter
+    boolean isCreateMode = DataUtils.parseMode(request, response);
 
-    Filter ownEditFilter = new CompositeFilter(
-        CompositeFilterOperator.AND,
-        Arrays.asList(
-            new FilterPredicate("proj-id", FilterOperator.EQUAL, projId),
-            new CompositeFilter(
-                CompositeFilterOperator.OR,
-                Arrays.<Filter>asList(
-                    new FilterPredicate("owners", FilterOperator.EQUAL, uid),
-                    new FilterPredicate("editors", FilterOperator.EQUAL,
-                                        uid)))));
+    // Check if working with image or mask
+    String parentImg = request.getParameter("parent-img");
+    boolean isMask = !DataUtils.isEmptyParameter(parentImg);
 
-    projQuery.setFilter(ownEditFilter);
-    PreparedQuery accessibleProjects = datastore.prepare(projQuery);
+    String now = Instant.now().toString();
 
-    // Only owners and editors of given project can modify or create
-    if (accessibleProjects.countEntities() == 0) {
-      throw new IOException(
-          "User does not have permission to edit the project.");
+    // Get the image name entered by the user
+    // When creating, default image name if not provided is
+    // Untitled-{current UTC time}
+    String imgName = request.getParameter("img-name");
+    if (DataUtils.isEmptyParameter(imgName)) {
+      if (isCreateMode) {
+        imgName = "Untitled-" + now;
+      } else {
+        throw new IOException("Image name must be provided.");
+      }
     }
+
+    String uEmail = userService.getCurrentUser().getEmail();
+    String projId = request.getParameter("proj-id");
+    Entity projEntity = DataUtils.getProjectEntity(projId, uEmail, true, false);
+    Key projKey = projEntity.getKey();
+    Key assetParentKey = projKey;
+
+    // Default case: creating a new base iamge
+    Entity imgEntity = new Entity(DataUtils.IMAGE, projKey);
 
     // Asset to update must already exist
     if (isMask) {
-      Query imgQuery = new Query("Image").setAncestor(projKey);
-      Filter imgFilter =
-          new FilterPredicate("name", FilterOperator.EQUAL, parentImg);
-      imgQuery.setFilter(imgFilter);
-      PreparedQuery existingImg = datastore.prepare(imgQuery);
+      Entity existingImg = getAssetEntity(DataUtils.IMAGE, projKey, parentImg);
 
-      if (existingImg.countEntities() == 0) {
-        throw new IOException(
-            "No parent image with that name exists for this project or this project does not exist.");
-      }
-      if (mode == "create") {
-        Key parentEntityKey =
-            existingImg.asSingleEntity().getKey();
-        imgEntity = new Entity("Mask", parentEntityKey);
+      if (isCreateMode) {
+        Key parentEntityKey = existingImg.getKey();
+        imgEntity = new Entity(DataUtils.MASK, parentEntityKey);
       } else {
-        assetParentKey = existingImg.asSingleEntity().getKey();
-
-        Query maskQuery = new Query("Mask").setAncestor(assetParentKey);
-        Filter maskFilter =
-            new FilterPredicate("name", FilterOperator.EQUAL, imgName);
-        imgQuery.setFilter(maskFilter);
-        PreparedQuery existingMask = datastore.prepare(maskQuery);
-
-        if (existingMask.countEntities() == 0) {
-          throw new IOException(
-              "No mask with that name exists to update for this project.");
-        }
-        imgEntity = existingMask.asSingleEntity();
+        assetParentKey = existingImg.getKey();
+        imgEntity = getAssetEntity(DataUtils.MASK, assetParentKey, imgName);
       }
-    } else if (mode == "update") {
-      Query imgQuery = new Query("Image").setAncestor(projKey);
-      Filter imgFilter =
-          new FilterPredicate("name", FilterOperator.EQUAL, imgName);
-      imgQuery.setFilter(imgFilter);
-      PreparedQuery existingImg = datastore.prepare(imgQuery);
-
-      if (existingImg.countEntities() == 0) {
-        throw new IOException(
-            "No image with that name exists to update for this project or this project does not exist.");
+    } else {
+      if (!isCreateMode) {
+        imgEntity = getAssetEntity(DataUtils.IMAGE, projKey, imgName);
       }
-      imgEntity = existingImg.asSingleEntity();
     }
 
     // Owners have additional permissions
-    String ownersString =
-        (String)accessibleProjects.asSingleEntity().getProperty("owners");
-    Boolean isOwner = ownersString.contains(uid);
+    ArrayList<String> owners =
+        (ArrayList<String>)projEntity.getProperty("owners");
+    boolean isOwner = owners.contains(uEmail);
 
-    Boolean delete = Boolean.parseBoolean(request.getParameter("delete"));
-    if (delete) {
-      if (!isOwner || mode == "create") {
-        throw new IOException(
-            "Only owners can delete assets and only in update mode.");
+    if (isCreateMode && !isOwner && !isMask) {
+      throw new IOException("You do not have permission to to upload an image to this project.");
+    }
+
+    boolean delete = Boolean.parseBoolean(request.getParameter("delete"));
+    if (delete && !isCreateMode) {
+      if (!isOwner) {
+        throw new IOException("Only owners can delete assets.");
       } else {
         datastore.delete(imgEntity.getKey());
         response.sendRedirect("/");
@@ -165,81 +126,84 @@ public class BlobServlet extends HttpServlet {
       }
     }
 
-    if (mode == "create" && !isOwner && !isMask) {
-      throw new IOException("Only owners can add new images.");
-    }
-
     BlobstoreService blobstoreService =
         BlobstoreServiceFactory.getBlobstoreService();
     Map<String, List<BlobKey>> blobs = blobstoreService.getUploads(request);
     List<BlobKey> blobKeys = blobs.get("image");
+    BlobKey blobKey = blobKeys.get(0);
+    BlobInfo blobInfo = new BlobInfoFactory().loadBlobInfo(blobKey);
+
+    // Check for blob size as well since no upload doesn't guarantee an empty
+    // BlobKey List
+    boolean hasNonEmptyImage =
+        !(blobKeys == null || blobKeys.isEmpty() || blobInfo.getSize() == 0);
 
     // User submitted form without selecting a file
-    Boolean hasNonEmptyImage = !(blobKeys == null || blobKeys.isEmpty());
     if (!hasNonEmptyImage) {
-      if (mode == "create") {
-        throw new IOException("User submitted form without selecting a file.");
+      if (isCreateMode) {
+        throw new IOException("Form submitted without a file.");
       }
-    } else if (mode == "update" && !isMask) {
-      blobstoreService.delete(blobKeys.get(0));
-      throw new IOException("No upload allowed for base image update.");
+    } else {
+      if (!isCreateMode && !isMask) {
+        blobstoreService.delete(blobKey);
+        hasNonEmptyImage = false;
+      }
     }
 
-    if (mode == "create" || (mode == "update" && hasNonEmptyImage)) {
-      ArrayList<String> validExtensions = new ArrayList<String>(
-          (isMask) ? Arrays.asList("png")
-                   : Arrays.asList("png", "jpg", "jpeg", "jfif", "pjpeg", "pjp",
-                                   "gif", "bmp", "ico", "cur", "svg", "webp"));
-
-      // Check validity of blob key
-      BlobKey blobKey = blobKeys.get(0);
-      BlobInfo blobInfo = new BlobInfoFactory().loadBlobInfo(blobKey);
-      String[] splitFilename = blobInfo.getFilename().split(".");
-      String extension = splitFilename[splitFilename.length - 1].toLowerCase();
-      if (blobInfo.getSize() == 0 || !validExtensions.contains(extension)) {
-        blobstoreService.delete(blobKey);
-        throw new IOException("Blobkeys invalid or file not supported.");
-      }
-
+    // Set blobkey property
+    if (isCreateMode || (!isCreateMode && hasNonEmptyImage)) {
+      checkFileValidity(blobKey, isMask);
       imgEntity.setProperty("blobkey", blobKey.getKeyString());
     }
 
-    String now = Instant.now().toString();
-    imgEntity.setProperty("name", imgName);
+    // Last-modified time
     imgEntity.setProperty("utc", now);
     projEntity.setProperty("utc", now);
 
+    // Add indexed tags
     String tags = request.getParameter("tags");
+    if (!DataUtils.isEmptyParameter(tags)) {
+      ArrayList<String> listTags =
+          new ArrayList<String>(DataUtils.parseCommaList(tags));
+      imgEntity.setIndexedProperty("tags",
+                                   DataUtils.withDuplicatesRemoved(listTags));
+    }
+
+    // Set/update name, ensuring uniqueness under parent
     String newName = request.getParameter("new-name");
-
-    if (mode == "update") {
-      if (tags != null) {
-        ArrayList<String> listTags =
-            new ArrayList(Arrays.asList(tags.toLowerCase().split("\\s*,\\s*")));
-        LinkedHashSet<String> hashTags = new LinkedHashSet<String>(listTags);
-        ArrayList<String> uniqueTags = new ArrayList<String>(hashTags);
-        imgEntity.setProperty("tags", uniqueTags);
-      }
-
-      if (newName != null) {
-        Query nameQuery =
-            new Query((isMask) ? "Mask" : "Image").setAncestor(assetParentKey);
-        Filter nameFilter =
-            new FilterPredicate("name", FilterOperator.EQUAL, newName);
-        nameQuery.setFilter(nameFilter);
-        PreparedQuery existingName = datastore.prepare(nameQuery);
-
-        if (existingName.countEntities() != 0) {
-          newName += now;
-        }
-        imgEntity.setProperty("name", newName);
+    boolean rename = !isCreateMode && !DataUtils.isEmptyParameter(newName) &&
+                     !imgName.equals(newName);
+    String checkedName = (rename) ? newName : imgName;
+    if (isCreateMode || rename) {
+      try {
+        getAssetEntity((isMask) ? DataUtils.MASK : DataUtils.IMAGE,
+                       assetParentKey, checkedName);
+        checkedName += "-" + now;
+        imgEntity.setProperty("name", checkedName);
+      } catch (Exception e) {
+        imgEntity.setProperty("name", checkedName);
       }
     }
 
+    // Batch operation
     datastore.put(Arrays.asList(imgEntity, projEntity));
-    response.sendRedirect("/");
+
+    // Send the image URL and name
+    response.setContentType("application/json");
+    String url =
+        "blob-host?blobkey=" + (String)imgEntity.getProperty("blobkey");
+    Gson gson = new GsonBuilder().setPrettyPrinting().create();
+    String jsonImgInfo = gson.toJson(new blobPostReturn(url, checkedName));
+    response.getWriter().println(jsonImgInfo);
   }
 
+  /**
+   * Handles GET requests for images and masks.
+   * Responds with JSON string of ImageInfo objects upon successful GET.
+   * @param     {HttpServletRequest}    request
+   * @param     {HttpServletResponse}   response
+   * @return    {void}
+   */
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response)
       throws IOException {
@@ -248,37 +212,184 @@ public class BlobServlet extends HttpServlet {
     UserService userService = UserServiceFactory.getUserService();
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
 
-    String uid = userService.getCurrentUser().getUserId();
+    String uEmail = userService.getCurrentUser().getEmail();
 
+    // Must be logged in
     if (!userService.isUserLoggedIn()) {
-      response.sendRedirect("/imgmanip.html");
+      response.sendRedirect("/");
       return;
     }
-    Query userQuery = new Query("User");
-    Filter propertyFilter =
-        new FilterPredicate("uid", FilterOperator.EQUAL, uid);
 
-    userQuery.setFilter(propertyFilter);
+    String projId = request.getParameter("proj-id");
+    Entity projEntity = DataUtils.getProjectEntity(projId, uEmail, true, true);
+    Key projKey = projEntity.getKey();
 
-    PreparedQuery user = datastore.prepare(userQuery);
+    boolean withMasks =
+        Boolean.parseBoolean(request.getParameter("with-masks"));
 
-    Entity userEntity = user.asSingleEntity();
+    String sortImg = request.getParameter("sort-img");
+    // Sorted in descending chronological order by default
+    if (DataUtils.isEmptyParameter(sortImg)) {
+      sortImg = DataUtils.DESCENDING_SORT;
+    }
+    sortImg = sortImg.toLowerCase();
 
-    Query imageQuery = new Query("Image").setAncestor(userEntity.getKey());
+    Query imageQuery =
+        new Query(DataUtils.IMAGE)
+            .setAncestor(projKey)
+            .addSort("utc", sortImg.equals(DataUtils.ASCENDING_SORT)
+                                ? Query.SortDirection.ASCENDING
+                                : Query.SortDirection.DESCENDING)
+            .setFilter(combinedGetFilters(request, withMasks, DataUtils.IMAGE));
 
-    PreparedQuery storedBlobKeys = datastore.prepare(imageQuery);
+    PreparedQuery storedImages = datastore.prepare(imageQuery);
 
-    ArrayList<String> blobKeys = new ArrayList<String>();
+    ArrayList<ImageInfo> imageObjects = new ArrayList<ImageInfo>();
 
-    for (Entity entity : storedBlobKeys.asIterable()) {
-      String url =
-          "/blob-host?blobkey=" + (String)entity.getProperty("blobkey");
-      blobKeys.add(url);
+    for (Entity imageEntity : storedImages.asIterable()) {
+      String imageUrl =
+          "/blob-host?blobkey=" + (String)imageEntity.getProperty("blobkey");
+      String imageName = (String)imageEntity.getProperty("name");
+      String imageTime = (String)imageEntity.getProperty("utc");
+      ArrayList<String> imageTags =
+          (ArrayList<String>)imageEntity.getProperty("tags");
+
+      ArrayList<MaskInfo> imageMasks = new ArrayList<MaskInfo>();
+      if (withMasks) {
+        String sortMask = request.getParameter("sort-mask");
+        // Sorted in descending chronological order by default
+        if (DataUtils.isEmptyParameter(sortMask)) {
+          sortMask = DataUtils.DESCENDING_SORT;
+        }
+        sortImg = sortImg.toLowerCase();
+
+        Query maskQuery =
+            new Query(DataUtils.MASK)
+                .setAncestor(imageEntity.getKey())
+                .addSort("utc", sortMask.equals(DataUtils.ASCENDING_SORT)
+                                    ? Query.SortDirection.ASCENDING
+                                    : Query.SortDirection.DESCENDING)
+                .setFilter(combinedGetFilters(request, withMasks, DataUtils.MASK));
+
+        PreparedQuery storedMasks = datastore.prepare(maskQuery);
+
+        for (Entity maskEntity : storedMasks.asIterable()) {
+          String maskUrl =
+              "/blob-host?blobkey=" + (String)maskEntity.getProperty("blobkey");
+          String maskName = (String)maskEntity.getProperty("name");
+          String maskTime = (String)maskEntity.getProperty("utc");
+          ArrayList<String> maskTags =
+              (ArrayList<String>)maskEntity.getProperty("tags");
+          imageMasks.add(new MaskInfo(maskUrl, maskName, maskTime, maskTags));
+        }
+      }
+
+      imageObjects.add(
+          new ImageInfo(imageUrl, imageName, imageTime, imageTags, imageMasks));
     }
 
     Gson gson =
         new GsonBuilder().setPrettyPrinting().disableHtmlEscaping().create();
-    String jsonBlobKeys = gson.toJson(blobKeys);
-    response.getWriter().println(jsonBlobKeys);
+    String jsonImages = gson.toJson(imageObjects);
+    response.getWriter().println(jsonImages);
+  }
+
+  /**
+   * Checks if the file uploaded to Blobstore has a valid file extension.
+   * @param     {BlobKey}   blobKey   key for the file in question
+   * @param     {boolean}   isMask    mask or image
+   * @return    {void}
+   */
+  private void checkFileValidity(BlobKey blobKey, boolean isMask)
+      throws IOException {
+    BlobstoreService blobstoreService =
+        BlobstoreServiceFactory.getBlobstoreService();
+
+    ArrayList<String> validExtensions = new ArrayList<String>(
+        (isMask) ? Arrays.asList("png")
+                 : Arrays.asList("png", "jpg", "jpeg", "jfif", "pjpeg", "pjp",
+                                 "gif", "bmp", "ico", "cur", "svg", "webp"));
+
+    BlobInfo blobInfo = new BlobInfoFactory().loadBlobInfo(blobKey);
+    String[] splitFilename = blobInfo.getFilename().split("\\.");
+    String extension = splitFilename[splitFilename.length - 1].toLowerCase();
+    if (blobInfo.getSize() == 0) {
+      blobstoreService.delete(blobKey);
+      throw new IOException("Invalid Blobkey.");
+    } else if (!validExtensions.contains(extension)) {
+      blobstoreService.delete(blobKey);
+      throw new IOException("File not supported.");
+    }
+  }
+
+  /**
+   * Retrieves asset Entity based on parameters.
+   * @param     {String}    kind        asset kind
+   * @param     {Key}       ancestor    parent of asset
+   * @param     {String}    name        name of the desired asset
+   * @return    {Entity}
+   */
+  private Entity getAssetEntity(String kind, Key ancestor, String name)
+      throws IOException {
+    DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+
+    Query imgQuery = new Query(kind).setAncestor(ancestor);
+    Filter imgFilter = new FilterPredicate("name", FilterOperator.EQUAL, name);
+    imgQuery.setFilter(imgFilter);
+    PreparedQuery existingImgQuery = datastore.prepare(imgQuery);
+
+    if (existingImgQuery.countEntities() == 0) {
+      throw new IOException("Image not found.");
+    }
+
+    return existingImgQuery.asSingleEntity();
+  }
+
+  /**
+   * Combines all applicable filters based on parameters.
+   * Returns a Filter, CompositeFilter, or null.
+   * @param     {HttpServletRequest}    request
+   * @param     {boolean}               withMasks
+   * @param     {String}                kind        either IMAGE or MASK
+   * @return    {Filter}
+   */
+  private Filter combinedGetFilters(HttpServletRequest request, boolean withMasks, String kind) {
+    ArrayList<Filter> allImgFilters = new ArrayList<Filter>();
+
+    String tag = request.getParameter("tag");
+    boolean isImage = kind == DataUtils.IMAGE;
+    boolean isTagApplicable = !(isImage && withMasks);
+    if (!DataUtils.isEmptyParameter(tag) && isTagApplicable) {
+      Filter tagFilter = new FilterPredicate("tags", FilterOperator.EQUAL, tag.toLowerCase());
+      allImgFilters.add(tagFilter);
+    }
+
+    String imgName = request.getParameter(isImage ? "img-name" : "mask-name");
+    if (!DataUtils.isEmptyParameter(imgName)) {
+      Filter nameFilter =
+          new FilterPredicate("name", FilterOperator.EQUAL, imgName);
+      allImgFilters.add(nameFilter);
+    }
+
+    // A composite filter requres more than one filter
+    if (allImgFilters.size() == 1) {
+      return allImgFilters.get(0);
+    } else if (allImgFilters.size() > 1) {
+      return new CompositeFilter(CompositeFilterOperator.AND, allImgFilters);
+    }
+    return null;
+  }
+}
+
+/**
+ * Holds the values url and name of an image after a successful POST request.
+ */
+class blobPostReturn {
+  String url;
+  String name;
+
+  public blobPostReturn(String url, String name) {
+    this.url = url;
+    this.name = name;
   }
 }
