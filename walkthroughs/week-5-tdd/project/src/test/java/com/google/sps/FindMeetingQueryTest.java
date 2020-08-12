@@ -58,7 +58,6 @@ public final class FindMeetingQueryTest {
   private static final int DURATION_2_HOUR = 120;
   private static final int DURATION_12_HOUR = 720;
 
-
   private FindMeetingQuery query;
 
   @Before
